@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="row vh-100 justify-content-center align-items-center">
+    <div class="col-xxl-6 col-lg-8 col-md-10">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="row g-0">
+          <!-- Formulaire de connexion -->
+          <div class="col-md-7 col-12 d-flex align-items-center">
+            <div class="card-body p-5 w-100">
+              <h3 class="text-center mb-4">Connexion</h3>
+              <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <!-- Champ Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <div class="input-group">
+                    <input id="email" type="text" class="form-control bg-body-secondary" formControlName="username" placeholder="Entrez votre email" [ngClass]="{'is-invalid': hasDisplayableError('username')}" />
+                  </div>
+                  <div *ngIf="hasDisplayableError('username')" class="text-danger small mt-1">
+                    <div *ngIf="form.controls['username'].hasError('required')">Veuillez entrer votre email.</div>
+                    <div *ngIf="form.controls['username'].hasError('email')">Veuillez entrer un email valide.</div>
+                  </div>
+                </div>
+
+                <!-- Champ Token -->
+                <div class="mb-3">
+                  <label for="token" class="form-label">Token</label>
+                  <div class="input-group">
+                    <input id="token" type="password" class="form-control bg-body-secondary" formControlName="token" placeholder="Entrez votre token" [ngClass]="{'is-invalid': hasDisplayableError('token')}" />
+                  </div>
+                  <div *ngIf="hasDisplayableError('token')" class="text-danger small mt-1">
+                    <div *ngIf="form.controls['token'].hasError('required')">Veuillez entrer votre token.</div>
+                  </div>
+                </div>
+
+                <!-- Bouton Soumettre -->
+                <div class="mt-4">
+                  <button type="submit" class="btn btn-success w-100 rounded-3" [disabled]="form.invalid">
+                    Valider
+                  </button>
+                </div>
+              </form>
+
+              <!-- Messages d'état -->
+              <div *ngIf="statusMessage" class="alert alert-info text-center mt-3">
+                {{ statusMessage }}
+              </div>
+
+              <!-- Chemin du fichier -->
+              <div *ngIf="filePath" class="alert alert-light text-center mt-3">
+                <strong>Chemin du fichier :</strong> {{ filePath }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Illustration (optionnelle) -->
+          <div class="col-md-5 d-none d-md-flex align-items-center justify-content-center bg-light rounded-end-4">
+            <img src="jira.jpg" alt="Illustration" class="img-fluid rounded-3 p-3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

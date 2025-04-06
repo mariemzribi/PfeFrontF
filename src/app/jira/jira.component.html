@@ -9,6 +9,17 @@
               <h3 class="text-center mb-4">Connexion</h3>
               <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <!-- Champ Email -->
+
+                <div class="mb-3">
+                  <label for="domaine" class="form-label">Domaine</label>
+                  <div class="input-group">
+                    <input id="domaine" type="text" class="form-control bg-body-secondary" formControlName="domaine" placeholder="Entrez votre domaine" [ngClass]="{'is-invalid': hasDisplayableError('domaine')}" />
+                  </div>
+                  <div *ngIf="hasDisplayableError('domaine')" class="text-danger small mt-1">
+                    <div *ngIf="form.controls['domaine'].hasError('required')">Veuillez entrer votre domaine.</div>
+                  </div>
+                </div>
+                
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
                   <div class="input-group">

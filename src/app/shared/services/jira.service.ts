@@ -10,18 +10,20 @@ export class JiraService {
 
   constructor(private http: HttpClient) {}
 
-  getJiraProjects(email: string, token: string): Observable<any> {
+  getJiraProjects(email: string, token: string, domaine: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/projects`, {
-      params: { email: email, apiToken: token },
+      params: { email: email, apiToken: token, domaine: domaine }, // Correct param format
       responseType: 'json',
     });
   }
-  getJiraTasks(email: string, token: string, projectId: string): Observable<any> {
+  getJiraTasks(email: string, token: string, projectId: string , domaine:string): Observable<any> {
+    console.log(projectId);
     return this.http.get(`${this.apiUrl}/issues`, {
       params: {
         email: email,
         apiToken: token,
-        projectName: `${projectId}` // Filtrer les tâches du projet
+        projectName: `${projectId}`,
+        domaine: domaine // Filtrer les tâches du projet
       },
       responseType: 'json',
     });

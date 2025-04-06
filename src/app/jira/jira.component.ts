@@ -24,7 +24,8 @@ export class JiraComponent {
     // Initialisation du formulaire avec des validateurs
     this.form = this.formBuilder.group({
       username: ['', [Validators.required, Validators.email]], // Champ email avec validation
-      token: ['', Validators.required] // Champ token avec validation
+      token: ['', Validators.required],
+      domaine: ['', Validators.required] // Champ token avec validation
     });
   }
 
@@ -39,17 +40,17 @@ export class JiraComponent {
     if (this.form.valid) {
       const email = this.form.value.username;
       const token = this.form.value.token;
-
+      const domaine = this.form.value.domaine;
       // Appel à l'API backend pour récupérer les projets Jira
       this.http.get('https://localhost:7104/api/jira/projects', {
-        params: { email: email, apiToken: token },
+        params: { email: email, apiToken: token , domaine :domaine},
         responseType: 'json'
       })
       .subscribe({
         next: (response: any) => {
           this.statusMessage = 'Fichier JSON créé avec succès.';
           // Rediriger vers le tableau de bord avec les paramètres email et token
-          this.router.navigate(['/dashboard'], { queryParams: { email: email, token: token } });
+          this.router.navigate(['/dashboard'], { queryParams: { email: email, token: token , domaine: domaine } });
         },
         error: () => {
           this.statusMessage = 'Erreur lors de la connexion à Jira.';

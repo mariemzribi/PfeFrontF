@@ -39,7 +39,10 @@ export class LoginComponent {
       this.service.signin(this.form.value).subscribe({
         next: (res: any) => {
           localStorage.setItem('token', res.token);
+          console.log('Token:', res.token); 
+          if (res.token) {
           this.router.navigateByUrl('/jira');
+          }
         },
         error: err => {
           if (err.status == 400)

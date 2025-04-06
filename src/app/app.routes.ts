@@ -4,6 +4,7 @@ import { RegistrationComponent } from './user/registration/registration.componen
 import { LoginComponent } from './user/login/login.component';
 import {JiraComponent } from './jira/jira.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './auth.guard';
 export const routes: Routes = [
   { path: '', redirectTo: '/signin', pathMatch: 'full' },
   {
@@ -14,6 +15,6 @@ export const routes: Routes = [
       
     ]
   },
-  { path: 'jira', component: JiraComponent },
-  { path: 'dashboard', component: DashboardComponent }
+  { path: 'jira', component: JiraComponent ,canActivate: [AuthGuard]},
+  { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard] }
 ];

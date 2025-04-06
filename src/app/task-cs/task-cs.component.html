@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>Ajouter un supplément</h2>
+
+<form [formGroup]="supplementForm" class="dialog-form">
+  <mat-dialog-content class="form-grid">
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Reg Package</mat-label>
+        <input matInput type="number" formControlName="regPackageId" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Commentaire</mat-label>
+        <input matInput type="text" formControlName="comment" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Temps pour création TC</mat-label>
+        <input matInput type="number" formControlName="timeNeededForTcCreation" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Temps pour tester</mat-label>
+        <input matInput type="number" formControlName="timeNeededToTest" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Bugs trouvés</mat-label>
+        <input matInput type="number" formControlName="bugsRaised" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nombre de TC</mat-label>
+        <input matInput type="number" formControlName="nbTc" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="fill" class="form-field">
+        <mat-label>Nombre de TC modifiés</mat-label>
+        <input matInput type="number" formControlName="nbTcModified">
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-button">Annuler</button>
+    <button mat-button color="primary" (click)="onSave()" class="save-button">Sauvegarder</button>
+  </mat-dialog-actions>
+</form>

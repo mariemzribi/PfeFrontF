@@ -13,7 +13,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';  // Importer le module
 
-
 export interface Supplement {
   idSup?: number;
   usId: number;
@@ -25,10 +24,12 @@ export interface Supplement {
   nbTc?: number;
   nbTcModified?: number;
 }
+
 @Component({
-  selector: 'app-task-cs',
+  selector: 'app-task',
   standalone: true,
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -38,42 +39,36 @@ export interface Supplement {
     MatPaginatorModule,
     MatSortModule,
     MatIconModule,
-    MatGridListModule],
-  templateUrl: './task-cs.component.html',
-  styleUrls: ['./task-cs.component.css']
+    MatGridListModule
+  ],
+  templateUrl: './task.component.html',
+  styles: ``
 })
-export class TaskCSComponent {
-    supplementForm: FormGroup;
-  
-    constructor(
-      public dialogRef: MatDialogRef<TaskCSComponent>, 
-      @Inject(MAT_DIALOG_DATA) public data: Supplement,
-      private fb: FormBuilder
-    ) {
-      // Initialisation du formulaire avec des valeurs vides ou par défaut
-      this.supplementForm = this.fb.group({
-        usId: [data?.usId || '', ],
-        regPackageId: [data?.regPackageId || '', ],
-        comment: [data?.comment || '',],
-        timeNeededForTcCreation: [data?.timeNeededForTcCreation],
-        timeNeededToTest: [data?.timeNeededToTest ],
-        bugsRaised: [data?.bugsRaised],
-        nbTc: [data?.nbTc ],
-        nbTcModified: [data?.nbTcModified ]
-      });
-    }
-  
-    // Méthode pour sauvegarder le supplément
-    onSave(): void {
-      if (this.supplementForm.valid) {
-        this.dialogRef.close(this.supplementForm.value); // Envoie les données au composant parent
-      }
-  
+export class TaskComponent {
+  supplementForm: FormGroup;
 
-    }
-  
-    // Méthode pour annuler
-    onCancel(): void {
-      this.dialogRef.close(); // Ferme la boîte de dialogue sans sauvegarder
-    }
+  constructor(
+    public dialogRef: MatDialogRef<TaskComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Supplement,
+    private fb: FormBuilder
+  ) {
+    this.supplementForm = this.fb.group({
+      usId: [data.usId],
+      regPackageId: [data.regPackageId],
+      comment: [data.comment],
+      timeNeededForTcCreation: [data.timeNeededForTcCreation],
+      timeNeededToTest: [data.timeNeededToTest],
+      bugsRaised: [data.bugsRaised],
+      nbTc: [data.nbTc],
+      nbTcModified: [data.nbTcModified]
+    });
   }
+
+  onSave(): void {
+    this.dialogRef.close(this.supplementForm.value);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+}

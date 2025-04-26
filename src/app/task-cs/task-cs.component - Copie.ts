@@ -68,8 +68,6 @@ export class TaskCSComponent {
       if (this.supplementForm.valid) {
         this.dialogRef.close(this.supplementForm.value); // Envoie les données au composant parent
       }
-  
-
     }
   
     // Méthode pour annuler

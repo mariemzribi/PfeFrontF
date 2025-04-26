@@ -1,0 +1,101 @@
+<!-- /* Style pour le formulaire du dialogue */ -->
+
+<style>
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+/* Espacement entre chaque champ de formulaire */
+.form-field {
+  margin-bottom: 16px;
+}
+
+/* Alignement des boutons à droite dans le dialogue */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px;
+}
+
+/* Style pour le bouton Annuler */
+.cancel-button {
+  background-color: #f44336; /* Couleur rouge */
+  color: white;
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+/* Style pour le bouton Sauvegarder */
+.save-button {
+  background-color: #4caf50; /* Couleur verte */
+  color: white;
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+/* Effet de survol pour les boutons */
+.save-button:hover,
+.cancel-button:hover {
+  opacity: 0.8;
+}
+
+/* Ajout de marges et padding pour le dialogue */
+mat-dialog-content {
+  padding: 20px;
+}
+
+/* Le titre du dialogue */
+mat-dialog-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+</style>
+
+<h2 mat-dialog-title>Mettre à jour un supplément</h2>
+
+<form [formGroup]="supplementForm" class="dialog-form">
+  <mat-dialog-content>
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Reg Package</mat-label>
+    <input matInput type="number" formControlName="regPackageId" required>
+  </mat-form-field>
+  
+  
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Commentaire</mat-label>
+      <input matInput type="text" formControlName="comment" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Temps pour création TC</mat-label>
+      <input matInput type="number" formControlName="timeNeededForTcCreation" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Temps pour tester</mat-label>
+      <input matInput type="number" formControlName="timeNeededToTest" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Bugs trouvés</mat-label>
+      <input matInput type="number" formControlName="bugsRaised" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Nombre de TC</mat-label>
+      <input matInput type="number" formControlName="nbTc" required>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <!-- Section pour les boutons -->
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-button">Annuler</button>
+    <button mat-button color="primary" (click)="onSave()" class="save-button">Sauvegarder</button>
+  </mat-dialog-actions>
+</form>

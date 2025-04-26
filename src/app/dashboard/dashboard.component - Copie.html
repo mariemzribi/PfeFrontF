@@ -1,0 +1,666 @@
+<div class="dashboard-container">
+  <!-- Styles intégrés -->
+  <style>
+    /* .mat-column-summary {
+      width: 200px;
+    } */
+
+    /* Conteneur principal */
+    .dashboard-container {
+
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Barre latérale */
+    .sidebar {
+      width: 200px;
+      background-color: #2C3E50;
+      color: #fff;
+      padding: 20px;
+      border-right: 1px solid #34495E;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar:hover {
+      width: 220px;
+    }
+
+    .sidebar h3 {
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar li {
+      padding: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #34495E;
+      transition: background-color 0.3s ease;
+    }
+
+    .sidebar li:hover {
+      background-color: #16A085;
+    }
+
+    /* Contenu principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      background-color: #ECF0F1;
+      overflow-y: auto;
+    }
+
+    .main-content h2 {
+      color: #2C3E50;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    /* Tables */
+    .table {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th,
+    .table td {
+      padding: 15px;
+      text-align: left;
+      font-size: 0.95em;
+    }
+
+    .table-striped tbody tr:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+
+    .table-striped tbody tr:nth-child(even) {
+      background-color: #fff;
+    }
+
+    .table th {
+      background-color: #2C3E50;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .table td {
+      color: #34495E;
+    }
+
+    .table tr:hover {
+      background-color: #BDC3C7;
+    }
+
+    /* Alertes */
+    .alert {
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .alert-danger {
+      background-color: #F2D7D5;
+      border-color: #E57373;
+      color: #C0392B;
+    }
+
+    .alert-info {
+      background-color: #D5F5E3;
+      border-color: #82E0AA;
+      color: #1D8348;
+    }
+
+    /* Tâches */
+    .task-list {
+      margin-top: 30px;
+    }
+
+    .task-item {
+      padding: 20px;
+      margin-bottom: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .task-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .task-item h4 {
+      margin: 0;
+      font-size: 1.2em;
+      color: #2C3E50;
+    }
+
+    .task-item p {
+      font-size: 1em;
+      color: #7F8C8D;
+    }
+
+    .task-item .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .example-spacer {
+      flex: 1 1 auto;
+    }
+
+
+    /* Style de la colonne Action */
+    .action-header {
+      text-align: center;
+      width: 150px;
+      /* Largeur fixe pour la colonne */
+    }
+
+    .action-cell {
+      padding: 4px 0 !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      /* Espacement entre boutons */
+      min-width: 150px;
+    }
+
+    /* Style spécifique pour la colonne Actions */
+    /* Dans la section .action-header */
+    .action-header {
+      text-align: center;
+      width: 200px;
+      /* Augmenté de 150px à 200px */
+      min-width: 200px;
+      /* Ajout pour empêcher le rétrécissement */
+    }
+
+    /* Dans la section .action-cell */
+    .action-cell {
+      min-width: 200px;
+      /* Augmenté de 150px à 200px */
+      padding: 8px 0 !important;
+    }
+
+    /* Dans la section spécifique pour mat-column-action */
+    .mat-column-action {
+      width: 200px;
+      /* Augmenté de 150px/180px à 200px */
+      min-width: 200px;
+      flex: 0 0 200px;
+      /* Ajout pour forcer la largeur */
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .action-btn mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    /* Couleurs spécifiques pour chaque bouton */
+    .action-btn.add {
+      color: #2196F3;
+      /* Bleu */
+      background-color: rgba(33, 150, 243, 0.1);
+    }
+
+    .action-btn.edit {
+      color: #4CAF50;
+      /* Vert */
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .action-btn.delete {
+      color: #F44336;
+      /* Rouge */
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+
+    /* Effet au survol */
+    .action-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .action-btn.add:hover {
+      background-color: rgba(33, 150, 243, 0.2);
+    }
+
+    .action-btn.edit:hover {
+      background-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .action-btn.delete:hover {
+      background-color: rgba(244, 67, 54, 0.2);
+    }
+
+    /* Style spécifique pour la colonne Actions */
+    .mat-column-action {
+      width: 150px;
+      text-align: center;
+    }
+
+    .action-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .action-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-icon:hover {
+      transform: scale(1.2);
+    }
+
+    /* Style conditionnel pour les valeurs nulles */
+    .empty-value {
+      color: #999;
+      font-style: italic;
+    }
+
+    /* Style des cellules numériques */
+    .mat-cell {
+      text-align: center;
+      padding: 8px 4px !important;
+    }
+
+    /* Style des valeurs nulles */
+    .mat-cell:empty::after {
+      content: '-';
+      color: #999;
+      font-style: italic;
+    }
+
+    .width_column {
+      width: 200px;
+    }
+
+    /* Style des en-têtes */
+    .mat-header-cell {
+      text-align: center;
+      font-weight: bold;
+      background-color: #f5f5f5;
+    }
+
+    /* Style global pour toutes les cellules */
+    .mat-cell {
+      padding: 12px 16px !important;
+      vertical-align: middle;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Style spécifique pour la colonne Actions */
+    .mat-column-action {
+      width: 180px;
+      /* Largeur fixe */
+      text-align: center;
+
+      .action-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        /* Prend toute la hauteur */
+        min-height: 48px;
+        /* Hauteur minimum cohérente */
+        gap: 8px;
+      }
+
+      .action-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+
+        mat-icon {
+          font-size: 20px;
+        }
+      }
+
+      /* Alignement vertical parfait */
+      .action-btn,
+      .empty-action {
+        vertical-align: middle;
+        line-height: normal;
+      }
+    }
+
+
+
+    /* Component CSS */
+    /* .mat-column-summary {
+      min-width: 200px;
+    } */
+    .mat-header-cell,
+    .mat-cell,
+    .mat-mdc-cell,
+    .mat-column {
+      width: auto !important;
+      min-width: auto !important;
+      max-width: fit-content;
+      white-space: nowrap;
+      overflow: visible;
+      line-height: normal;
+    }
+
+
+    /* Correction de l'alignement pour les lignes vides */
+    .empty-action {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      color: #9e9e9e;
+    }
+  </style>
+
+  <mat-toolbar>
+    <!-- Bouton Menu avec MatMenu -->
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Ouvrir le menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span>My App</span>
+    <span class="example-spacer"></span>
+   <!-- Champ de recherche avec menu déroulant -->
+<mat-form-field class="project-selector">
+  <mat-label>Sélectionner un projet</mat-label>
+    <mat-select [(value)]="selectedProjectId" (selectionChange)="onProjectSelected()">
+    <!-- Champ de recherche -->
+    <div class="search-box">
+      <mat-form-field appearance="outline" floatLabel="always">
+                <input matInput 
+               placeholder="Rechercher..." 
+               [(ngModel)]="searchTerm"
+               (input)="filterProjects()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Liste filtrée -->
+    @for (id of filteredProjectIds; track id) {
+      <mat-option [value]="id">{{ projectDictionary[id] }}</mat-option>
+    }
+
+    <!-- Message vide -->
+    @if (filteredProjectIds.length === 0) {
+      <mat-option disabled>
+        {{ searchTerm ? 'Aucun résultat' : 'Aucun projet disponible' }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Ajouter aux favoris">
+      <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="Déconnexion" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <!-- Menu qui affiche la liste des projets -->
+  <mat-menu #menu="matMenu">
+    <ng-container *ngIf="projectDictionary && getProjectIds().length > 0; else noProjects">
+      <button mat-menu-item *ngFor="let id of getProjectIds()" (click)="selectProject(id)">
+        {{ projectDictionary[id] }}
+      </button>
+    </ng-container>
+    <ng-template #noProjects>
+      <button mat-menu-item disabled>Aucun projet disponible</button>
+    </ng-template>
+  </mat-menu>
+
+  <!-- Champ de recherche avec menu déroulant -->
+
+  <!-- Barre latérale -->
+  <!-- Contenu principal -->
+  <div class="main-content">
+    
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    
+
+    <div *ngIf="projects.length === 0" class="alert alert-info">
+      Aucun projet trouvé.
+    </div>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="tasks" matSort>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+          <td mat-cell *matCellDef="let task"> {{task.id}} </td>
+        </ng-container>
+        <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
+          <td mat-cell *matCellDef="let task">
+            <a [href]="task.self.replace('/rest/api/3/issue/../' , '/browse/ ')" target="_blank">
+              {{task.key}}
+            </a>
+          </td>
+        </ng-container>
+
+        <!-- Key Column -->
+        <!-- <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
+          <td mat-cell *matCellDef="let task"> {{task.key}} </td>
+        </ng-container> -->
+
+        <!-- Summary Column -->
+
+
+        <ng-container matColumnDef="summary">
+          <th mat-header-cell *matHeaderCellDef>Summary</th>
+          <td mat-cell *matCellDef="let task">{{task.fields.summary}}</td>
+
+          <!-- <th style="width: 200px" mat-header-cell *matHeaderCellDef mat-sort-header> Summary </th>
+              <td style="width: 200px" mat-cell *matCellDef="let task"> {{task.fields.summary}} </td> -->
+        </ng-container>
+
+        <!-- Epic Column -->
+        <ng-container matColumnDef="epic">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Epic </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.parent && task.fields.parent.key ? task.fields.parent.key :
+            'N/A'}} </td>
+        </ng-container>
+
+        <!-- IssueType Column -->
+        <ng-container matColumnDef="issuetype">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Issue Type </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.issuetype.name}} </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.status.name}} </td>
+        </ng-container>
+
+        <!-- Reg Package Column -->
+
+
+        <!-- Sprint Column -->
+        <ng-container matColumnDef="sprint">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Sprint </th>
+          <td mat-cell *matCellDef="let task"> {{ task.fields.customfield_10020 && task.fields.customfield_10020[0] ?
+            task.fields.customfield_10020[0].name : 'N/A' }} </td>
+
+        </ng-container>
+
+        <!-- Assignee Column -->
+        <ng-container matColumnDef="assignee">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.assignee ? task.fields.assignee.displayName : 'N/A'}} </td>
+        </ng-container>
+
+        <!-- QA Creation Column -->
+        <ng-container matColumnDef="qaCreation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> QA Creation </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case creation')}"> {{
+            getTaskStatusCreation(task) | async }}</td>
+        </ng-container>
+
+        <!-- QA Review Column -->
+        <ng-container matColumnDef="qaReview">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> QA Review </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case review')} ">{{getTaskStatusReview(task) |
+            async}} </td>
+        </ng-container>
+
+        <!-- Regression Creation Column -->
+        <!-- <ng-container matColumnDef="regressionCreation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Creation </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.regressionCreation || 'N/A'}} </td>
+        </ng-container> -->
+
+        <!-- Regression Review Column -->
+        <ng-container matColumnDef="QA Test case execution">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> QA execution</th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case execution')}">
+            {{getTaskStatusExecution(task) | async}} </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="Regression Test Case Creation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Creation </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Creation')}">
+            {{getTaskStatusRCreation(task)| async}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Regression Test Case Review">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Review </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Review')}">
+            {{getTaskStatusRview(task) | async}} </td>
+        </ng-container>
+        <!-- Deploy Column -->
+        <!-- <ng-container matColumnDef="deploy">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Deploy </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.deploy || 'N/A'}} </td>
+        </ng-container> -->
+
+        <!-- Assign To Column -->
+        <!-- <ng-container matColumnDef="Assign to">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Assign To </th>
+          <td mat-cell *matCellDef="let task"> {{task.fields.assignTo || 'N/A'}} </td>
+        </ng-container> -->
+
+        <!-- Status Test Column -->
+
+
+
+        <ng-container matColumnDef="regPackage">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Reg Package </th>
+          <td mat-cell *matCellDef="let task"> {{ task.regPackageId ? task.regPackageId : 'Aucun regPackageId' }} </td>
+        </ng-container>
+        <!-- Comment Column -->
+        <ng-container matColumnDef="Comment">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
+          <td mat-cell *matCellDef="let task"> {{ task.comment ? task.comment : 'Aucun commentaire' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time_needed_for_tc_creation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> time_needed_for_tc_creation </th>
+          <td mat-cell *matCellDef="let task">{{ task.timeNeededForTcCreation? task.timeNeededForTcCreation: 'Aucun
+            timeNeededForTcCreation' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time_needed_to_test">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> time_needed_to_test </th>
+          <td mat-cell *matCellDef="let task"> {{ task.timeNeededToTest? task.timeNeededToTest: 'Aucun timeNeededToTest'
+            }} </td>
+        </ng-container>
+        <ng-container matColumnDef="bugs_raised">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> bugs_raised </th>
+          <td mat-cell *matCellDef="let task">{{ task.bugsRaised ? task.bugsRaised : 'Aucun bugsRaised' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nb_tc">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> nb_tc </th>
+          <td mat-cell *matCellDef="let task"> {{ task.nbTc ? task.nbTc : 'Aucun nbTc' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Nb_tc_modified">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nb_tc_modified </th>
+          <td mat-cell *matCellDef="let task"> {{ task.nbTcModified ? task.nbTcModified : 'Aucun nbTcModified' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+          <td mat-cell *matCellDef="let task" class="action-cell">
+            <button mat-icon-button class="action-btn add" matTooltip="Ajouter" (click)="onAjoutSup(task)">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button mat-icon-button class="action-btn edit" matTooltip="Modifier" (click)="openUpdateDialog(task)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="action-btn delete" matTooltip="Supprimer" (click)="onDelete(task)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+
+
+        <!-- Row Template -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
+      </mat-paginator>
+    </div>
+
+    <div *ngIf="tasks.length === 0 && selectedProject" class="alert alert-info">
+      Aucune tâche trouvée pour ce projet.
+    </div>
+  </div>
+</div>

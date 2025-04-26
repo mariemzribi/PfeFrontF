@@ -1,0 +1,439 @@
+.dashboard-container {
+
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Barre latérale */
+  .sidebar {
+    width: 200px;
+    background-color: #2C3E50;
+    color: #fff;
+    padding: 20px;
+    border-right: 1px solid #34495E;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: width 0.3s ease;
+  }
+
+  .sidebar:hover {
+    width: 220px;
+  }
+
+  .sidebar h3 {
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    font-weight: bold;
+  }
+
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar li {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #34495E;
+    transition: background-color 0.3s ease;
+  }
+
+  .sidebar li:hover {
+    background-color: #16A085;
+  }
+
+  /* Contenu principal */
+  .main-content {
+    flex: 1;
+    padding: 30px;
+    background-color: #ECF0F1;
+    overflow-y: auto;
+  }
+
+  .main-content h2 {
+    color: #2C3E50;
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /* Tables */
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .table th,
+  .table td {
+    padding: 15px;
+    text-align: left;
+    font-size: 0.95em;
+  }
+
+  .table-striped tbody tr:nth-child(odd) {
+    background-color: #f1f1f1;
+  }
+
+  .table-striped tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+
+  .table th {
+    background-color: #2C3E50;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .table td {
+    color: #34495E;
+  }
+
+  .table tr:hover {
+    background-color: #BDC3C7;
+  }
+
+  /* Alertes */
+  .alert {
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  .alert-danger {
+    background-color: #F2D7D5;
+    border-color: #E57373;
+    color: #C0392B;
+  }
+
+  .alert-info {
+    background-color: #D5F5E3;
+    border-color: #82E0AA;
+    color: #1D8348;
+  }
+
+  /* Tâches */
+  .task-list {
+    margin-top: 30px;
+  }
+
+  .task-item {
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .task-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .task-item h4 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #2C3E50;
+  }
+
+  .task-item p {
+    font-size: 1em;
+    color: #7F8C8D;
+  }
+
+  .task-item .status {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+
+
+  /* Style de la colonne Action */
+  .action-header {
+    text-align: center;
+    width: 150px;
+    /* Largeur fixe pour la colonne */
+  }
+
+  .action-cell {
+    padding: 4px 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    /* Espacement entre boutons */
+    min-width: 150px;
+  }
+
+  /* Style spécifique pour la colonne Actions */
+  /* Dans la section .action-header */
+  .action-header {
+    text-align: center;
+    width: 200px;
+    /* Augmenté de 150px à 200px */
+    min-width: 200px;
+    /* Ajout pour empêcher le rétrécissement */
+  }
+
+  /* Dans la section .action-cell */
+  .action-cell {
+    min-width: 200px;
+    /* Augmenté de 150px à 200px */
+    padding: 8px 0 !important;
+  }
+
+  /* Dans la section spécifique pour mat-column-action */
+  .mat-column-action {
+    width: 200px;
+    /* Augmenté de 150px/180px à 200px */
+    min-width: 200px;
+    flex: 0 0 200px;
+    /* Ajout pour forcer la largeur */
+  }
+
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .action-btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+
+  /* Couleurs spécifiques pour chaque bouton */
+  .action-btn.add {
+    color: #2196F3;
+    /* Bleu */
+    background-color: rgba(33, 150, 243, 0.1);
+  }
+
+  .action-btn.edit {
+    color: #4CAF50;
+    /* Vert */
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+
+  .action-btn.delete {
+    color: #F44336;
+    /* Rouge */
+    background-color: rgba(244, 67, 54, 0.1);
+  }
+
+  /* Effet au survol */
+  .action-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .action-btn.add:hover {
+    background-color: rgba(33, 150, 243, 0.2);
+  }
+
+  .action-btn.edit:hover {
+    background-color: rgba(76, 175, 80, 0.2);
+  }
+
+  .action-btn.delete:hover {
+    background-color: rgba(244, 67, 54, 0.2);
+  }
+
+  /* Style spécifique pour la colonne Actions */
+  .mat-column-action {
+    width: 150px;
+    text-align: center;
+  }
+
+  .action-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .action-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .action-icon:hover {
+    transform: scale(1.2);
+  }
+
+  /* Style conditionnel pour les valeurs nulles */
+  .empty-value {
+    color: #999;
+    font-style: italic;
+  }
+
+  /* Style des cellules numériques */
+  .mat-cell {
+    text-align: center;
+    padding: 8px 4px !important;
+  }
+
+  /* Style des valeurs nulles */
+  .mat-cell:empty::after {
+    content: '-';
+    color: #999;
+    font-style: italic;
+  }
+
+  .width_column {
+    width: 200px;
+  }
+
+  /* Style des en-têtes */
+  .mat-header-cell {
+    text-align: center;
+    font-weight: bold;
+    background-color: #f5f5f5;
+  }
+
+  /* Style global pour toutes les cellules */
+  .mat-cell {
+    padding: 12px 16px !important;
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  /* Style spécifique pour la colonne Actions */
+  .mat-column-action {
+    width: 180px;
+    /* Largeur fixe */
+    text-align: center;
+
+    .action-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      /* Prend toute la hauteur */
+      min-height: 48px;
+      /* Hauteur minimum cohérente */
+      gap: 8px;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 2px;
+
+      mat-icon {
+        font-size: 20px;
+      }
+    }
+
+    /* Alignement vertical parfait */
+    .action-btn,
+    .empty-action {
+      vertical-align: middle;
+      line-height: normal;
+    }
+  }
+
+
+
+  /* Component CSS */
+  /* .mat-column-summary {
+    min-width: 200px;
+  } */
+  .mat-header-cell,
+  .mat-cell,
+  .mat-mdc-cell,
+  .mat-column {
+    width: auto !important;
+    min-width: auto !important;
+    max-width: fit-content;
+    white-space: nowrap;
+    overflow: visible;
+    line-height: normal;
+  }
+
+
+  /* Correction de l'alignement pour les lignes vides */
+  mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+
+    .project-selector {
+      order: -1; 
+      margin-right: auto;
+      width: 300px;
+      
+      mat-form-field {
+        width: 100%;
+  
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
+  
+        .mat-form-field-flex {
+          align-items: center;
+        }
+      }
+  
+      .search-box {
+        padding: 8px 12px;
+        background-color: #f5f5f5;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+  
+        mat-form-field {
+          width: 100%;
+  
+          input {
+            font-size: 14px;
+            padding: 6px 8px;
+          }
+  
+          mat-icon {
+            color: gray;
+          }
+        }
+      }
+    }
+  
+    .example-spacer {
+      flex: 1 1 auto;
+    }
+  
+    button {
+      margin-left: 8px;
+    }
+  }
+ 
+  .empty-action {
+    display: inline
+  
+  }
+  

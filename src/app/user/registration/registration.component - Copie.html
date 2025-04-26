@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="mb-3">
-    <input class="form-control bg-body-secondary" placeholder="Password" type="password" formControlName="password">
+    <input class="form-control bg-body-secondary" placeholder="Password" formControlName="password">
     <div class="error-feedback" *ngIf="hasDisplayableError('password')">
       <ng-container [ngSwitch]="form.controls.password.errors | firstKey">
         <div *ngSwitchCase="'required'">
@@ -43,7 +43,7 @@
     </div>
   </div>
   <div class="mb-3">
-    <input class="form-control bg-body-secondary" placeholder="Confirm Password" type="password"formControlName="confirmPassword">
+    <input class="form-control bg-body-secondary" placeholder="Confirm Password" formControlName="confirmPassword">
     <div class="error-feedback" 
     *ngIf="hasDisplayableError('confirmPassword') && form.controls.confirmPassword.hasError('passwordMismatch')">
       Passwords doesn't match.

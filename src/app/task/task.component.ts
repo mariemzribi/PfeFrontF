@@ -42,7 +42,7 @@ export interface Supplement {
     MatGridListModule
   ],
   templateUrl: './task.component.html',
-  styles: ``
+  styleUrls: ['./task.component.css']
 })
 export class TaskComponent {
   supplementForm: FormGroup;

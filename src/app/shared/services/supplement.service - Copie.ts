@@ -38,13 +38,12 @@ export class SupplementService {
   
     return this.http.post<Supplement>(url, supplement);
   }
-  deleteSupplement(idSup: number): Observable<string> {
+  deleteSupplement(idSup: number): Observable<void> {
+    // Construire l'URL avec l'ID du supplément à supprimer
     const url = `${this.apiUrl}/${idSup}`;
     
-    // Ajouter 'responseType: text' pour indiquer que la réponse est en texte brut
-    return this.http.delete<string>(url, { responseType: 'text' as 'json' });
+    // Effectuer la requête DELETE
+    return this.http.delete<void>(url);
   }
-  
-
   
 }

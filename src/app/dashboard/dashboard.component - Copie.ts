@@ -18,13 +18,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { TaskComponent } from '../task/task.component';
 import { TaskCSComponent } from '../task-cs/task-cs.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSpinner } from '@angular/material/progress-spinner'; // Assurez-vous d'importer cela
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { catchError } from 'rxjs/operators';
-import { MatSpinner } from '@angular/material/progress-spinner';
 
 interface Subtask {
   fields: {
@@ -59,8 +58,6 @@ interface Supplement {
   styleUrls: ['./dashboard.component.css'] // Si vous utilisez un fichier CSS
 })
 export class DashboardComponent implements OnInit {
-  spinnerMode: 'determinate' | 'indeterminate' | 'buffer' | 'query' = 'indeterminate'; 
-  
   TestCaseStatus: any[] = [];
   projects: any[] = []; // Tableau original des projets
   projectDictionary: { [key: string]: string } = {}; // Dictionnaire id -> name
@@ -77,7 +74,7 @@ export class DashboardComponent implements OnInit {
    // Vous pouvez ajouter des propriétés pour contrôler le spinner
    isLoading: boolean = true; // Affiche le spinner quand true
   spinnerColor: string = 'primary';
-  
+  spinnerMode: string = 'indeterminate';
   spinnerDiameter: number = 50;
 
   //nouvelle 
@@ -120,7 +117,6 @@ selectedProjectId: string = '';
   ) { }
   
   ngOnInit(): void {
-    this.isLoading = true; 
     const email = this.route.snapshot.queryParamMap.get('email');
     const token = this.route.snapshot.queryParamMap.get('token');
     const domaine = this.route.snapshot.queryParamMap.get('domaine');
@@ -146,15 +142,11 @@ selectedProjectId: string = '';
           if (storedId) {
             this.selectedProjectId = storedId;
             this.selectProject(storedId);
-            this.isLoading = false;
-
           }
         },
         error: (error: any) => {
           this.errorMessage = 'Erreur lors de la récupération des projets Jira.';
           console.error(error);
-          this.isLoading = false; // Cache le spinner en cas d'erreur
-
         },
       });
     } else {
@@ -164,7 +156,7 @@ selectedProjectId: string = '';
     this.fetchSupplements();
     setTimeout(() => {
       this.mergeTasksWithSupplements();
-    }, 50000);
+    }, 10000);
   }
   
   // ngAfterViewInit(): void {  
@@ -180,7 +172,6 @@ selectedProjectId: string = '';
       next: (data) => {
         this.supplements = data;
         console.log("supplements" ,this.supplements)
-        
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des supplements', err);
@@ -439,41 +430,25 @@ selectedProjectId: string = '';
     const supplementData: Supplement = {
       usId: task.id,
       comment: task.comment,
-      regPackageId: task.regPackageId,
-      timeNeededForTcCreation: task.timeNeededForTcCreation,
-      timeNeededToTest: task.timeNeededToTest,
-      bugsRaised: task.bugsRaised,
-      nbTc: task.nbTc,
-      nbTcModified: task.nbTcModified
+      regPackageId : task.regPackage,
+      timeNeededForTcCreation: task.time_needed_for_tc_creation,
+      timeNeededToTest:task.time_needed_to_test,
+      bugsRaised : task.bugs_raised,
+      nbTc : task.nbTc,
+      nbTcModified : task.nbTcModified
     };
-  
     const dialogRef = this.dialog.open(TaskComponent, {
       width: '400px',
       data: supplementData
     });
-  
     dialogRef.afterClosed().subscribe(updatedData => {
       if (updatedData) {
-        this.supplementService.updateSupplement(updatedData).pipe(
-          catchError(err => {
-            console.error('Erreur lors de la mise à jour du supplément :', err);
-            return of(null); // évite de casser l’appli
-          })
-        ).subscribe({
-          next: () => {
-            this.fetchSupplements(); // actualiser la liste
-            window.location.reload(); // si nécessaire
-          },
-          error: (err) => {
-            console.error('Erreur lors de la mise à jour du supplément :', err);
-          }
+        this.supplementService.updateSupplement(updatedData).subscribe(() => {
+          this.fetchSupplements(); // Rafraîchir les données
         });
       }
     });
   }
-  
-  
-  
   onAjoutSup(task: any): void {
     const supplementData: Supplement = {
       usId: task.id,  // Utilisation de l'ID de la tâche pour lier l'utilisateur
@@ -494,21 +469,14 @@ selectedProjectId: string = '';
   
     dialogRef.afterClosed().subscribe(newSupplement => {
       if (newSupplement) {
-        const usId = parseInt(newSupplement.usId, 10); // Convertir l'ID en entier si besoin
-        
-        this.supplementService.addSupplement(newSupplement, usId).pipe(
-          catchError(err => {
-            console.error('Erreur lors de l’ajout du supplément :', err);
-            return of(null);  // Retourne une valeur "vide" en cas d'erreur
-          })
-        ).subscribe({
-          next: () => {
-            this.fetchSupplements(); // Mise à jour des données affichées
-            window.location.reload(); // Rechargement de la page après succès
-          },
-          error: (err) => {
-            console.error('Erreur lors de l’ajout du supplément :', err);
-          }
+        const usId = newSupplement.usId;
+        console.log(usId); 
+        console.log(typeof usId); 
+        const usIdInt = parseInt(usId, 10); 
+        console.log(usIdInt);
+        console.log(typeof usIdInt);// Une fois que l'utilisateur a rempli le formulaire, on l'ajoute via le service
+        this.supplementService.addSupplement(newSupplement ,usId).subscribe(() => {
+          this.fetchSupplements(); // Rafraîchir la liste des suppléments
         });
       }
     });
@@ -516,18 +484,9 @@ selectedProjectId: string = '';
 
   onDelete(task: any): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
-      this.supplementService.deleteSupplement(task.idSup).subscribe({
-        next: (response) => {
-          // La réponse ici est du texte, vous pouvez l'afficher si nécessaire
-          console.log('Réponse de la suppression :', response); // Par exemple : "Supplement deleted successfully."
-          // Rafraîchir la liste des tâches après la suppression
-          this.fetchSupplements();
-          // Rechargement de la page après la suppression
-          window.location.reload();
-        },
-        error: (err) => {
-          console.error('Erreur lors de la suppression de la tâche :', err);
-        }
+      this.supplementService.deleteSupplement(task.idSup).subscribe(() => {
+        // Rafraîchir la liste des tâches après la suppression
+        this.fetchSupplements();
       });
     }
   }

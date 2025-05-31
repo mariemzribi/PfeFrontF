@@ -38,7 +38,7 @@
                     <input id="token" type="password" class="form-control bg-body-secondary" formControlName="token" placeholder="Entrez votre token" [ngClass]="{'is-invalid': hasDisplayableError('token')}" />
                   </div>
                   <div *ngIf="hasDisplayableError('token')" class="text-danger small mt-1">
-                    <div *ngIf="form.controls['token'].hasError('required')">Veuillez entrer votre token.</div>
+                    <div *ngIf="form.controls['token'].hasError('required')">Veuillez entrer votre toke.</div>
                   </div>
                 </div>
 
@@ -52,7 +52,7 @@
 
               <!-- Messages d'état -->
               <div *ngIf="statusMessage" class="alert alert-info text-center mt-3">
-                {{ statusMessage }}
+                {{ statusMessage }}n
               </div>
 
               <!-- Chemin du fichier -->

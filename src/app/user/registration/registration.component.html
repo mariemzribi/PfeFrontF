@@ -43,10 +43,10 @@
     </div>
   </div>
   <div class="mb-3">
-    <input class="form-control bg-body-secondary" placeholder="Confirm Password" type="password"formControlName="confirmPassword">
-    <div class="error-feedback" 
-    *ngIf="hasDisplayableError('confirmPassword') && form.controls.confirmPassword.hasError('passwordMismatch')">
-      Passwords doesn't match.
+    <input class="form-control bg-body-secondary" placeholder="Confirm Password" type="password" formControlName="confirmPassword">
+    <div class="error-feedback"
+      *ngIf="(hasDisplayableError('confirmPassword') || isSubmitted) && form.hasError('passwordMismatch')">
+      Passwords don't match.
     </div>
   </div>
   <div class="mt-4">

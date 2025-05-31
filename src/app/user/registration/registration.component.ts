@@ -20,7 +20,7 @@ export class RegistrationComponent {
 
   isSubmitted: boolean = false;
 
-  // Déclare le validateur avant de l'utiliser
+  // Validator pour vérifier que password et confirmPassword sont identiques
   passwordMatchValidator: ValidatorFn = (control: AbstractControl) => {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
@@ -29,7 +29,7 @@ export class RegistrationComponent {
       : null;
   };
 
-  // Utilisation du validateur ici, après son initialisation
+  // Formulaire d'inscription
   form = this.formBuilder.group({
     fullName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -41,6 +41,7 @@ export class RegistrationComponent {
     confirmPassword: ['', Validators.required],
   }, { validators: this.passwordMatchValidator });
 
+  // Lors de la soumission du formulaire
   onSubmit() {
     this.isSubmitted = true;
     if (this.form.valid) {
@@ -49,7 +50,7 @@ export class RegistrationComponent {
           if (res.succeeded) {
             this.form.reset();
             this.isSubmitted = false;
-            this.toastr.success('New user created!', 'Registration Successful');
+            this.toastr.success('Nouvel utilisateur créé avec succès !', 'Inscription réussie');
           }
         },
         error: err => {
@@ -59,27 +60,37 @@ export class RegistrationComponent {
     }
   }
 
+  // Gestion des erreurs
   handleError(err: any) {
-    if (err.error.errors) {
-      err.error.errors.forEach((x: any) => {
-        switch (x.code) {
-          case "DuplicateUserName":
-            this.toastr.error('Username is already taken.', 'Registration Failed');
-            break;
-          case "DuplicateEmail":
-            this.toastr.error('Email is already taken.', 'Registration Failed');
-            break;
-          default:
-            this.toastr.error('Contact the developer', 'Registration Failed');
-            console.log(x);
-            break;
+    if (Array.isArray(err.error)) {
+      let foundSpecificError = false;
+  
+      err.error.forEach((errorItem: any) => {
+        if (errorItem.code === 'DuplicateEmail') {
+          this.toastr.error('Cet email est déjà utilisé.', 'Erreur');
+          foundSpecificError = true;
+       
         }
       });
+      if (this.form.hasError('passwordMismatch')) {
+        this.toastr.error('Les mots de passe ne correspondent pas.', 'Erreur');
+        foundSpecificError = true;
+      }
+  
+      if (!foundSpecificError) {
+        this.toastr.error('Une erreur est survenue. Veuillez réessayer.', 'Erreur');
+        console.error('Erreurs inattendues:', err.error);
+      }
+  
     } else {
-      console.log('error:', err);
+      this.toastr.error('Erreur serveur. Veuillez réessayer plus tard.', 'Erreur');
+      console.error('Erreur serveur:', err);
     }
   }
-
+  
+  
+  
+  // Vérifie si un champ a une erreur à afficher
   hasDisplayableError(controlName: string): boolean {
     const control = this.form.get(controlName);
     return Boolean(control?.invalid) &&

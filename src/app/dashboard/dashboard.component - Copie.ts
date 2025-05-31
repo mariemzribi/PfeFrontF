@@ -66,6 +66,7 @@ export class DashboardComponent implements OnInit {
   subtasks: any[] = [];
   allTasks: any[] = [];
   supplements: any[] = [];
+  qaCreation: any[]= [];
 
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
  

@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import{TokenService} from '../../app/shared/services/token.service';
 @Component({
   selector: 'app-jira',
   standalone: true,
@@ -19,7 +19,8 @@ export class JiraComponent {
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+      private tokenService: TokenService
   ) {
     // Initialisation du formulaire avec des validateurs
     this.form = this.formBuilder.group({
@@ -42,15 +43,17 @@ export class JiraComponent {
       const token = this.form.value.token;
       const domaine = this.form.value.domaine;
       // Appel à l'API backend pour récupérer les projets Jira
-      this.http.get('https://localhost:7104/api/jira/projects', {
-        params: { email: email, apiToken: token , domaine :domaine},
-        responseType: 'json'
+      this.http.post('https://localhost:7104/api/jira/projects', {
+        email: email,
+  apiToken: token,
+  domaine: domaine
       })
       .subscribe({
         next: (response: any) => {
           this.statusMessage = 'Fichier JSON créé avec succès.';
+          this.tokenService.setCredentials(email, token, domaine);
           // Rediriger vers le tableau de bord avec les paramètres email et token
-          this.router.navigate(['/dashboard'], { queryParams: { email: email, token: token , domaine: domaine } });
+          this.router.navigate(['/dashboard']);
         },
         error: () => {
           this.statusMessage = 'Erreur lors de la connexion à Jira.';

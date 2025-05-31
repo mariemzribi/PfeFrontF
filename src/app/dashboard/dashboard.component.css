@@ -48,7 +48,7 @@
   .main-content {
     flex: 1;
     padding: 30px;
-    background-color: #ECF0F1;
+    background-color: #fff;
     overflow-y: auto;
   }
 
@@ -303,11 +303,13 @@
   }
 
   .width_column {
-    width: 200px;
+    width: 20px;
   }
 
   /* Style des en-têtes */
   .mat-header-cell {
+        width: 10px;
+
     text-align: center;
     font-weight: bold;
     background-color: #f5f5f5;
@@ -436,4 +438,35 @@
     display: inline
   
   }
+  .header-id {
+
+  font-size: 18px;
+  color: rgba(205, 255, 61, 1); /* Bleu pour le faire ressortir */
+  font-weight: 700;
+}
+
+.header-key{
+   font-size: 20px; /* Tu peux changer à 22px ou plus si tu veux */
+  font-weight: bold;
+}
+.btn mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+table.mat-table {
+  table-layout: auto !important;
+  width: 100% !important;
+}
+
+.epic-select-compact .mat-mdc-form-field-infix {
+  width: 10px; /* ou moins si besoin */
+  padding: 0;
+}
   
+.search-header {
+  width: 140px;
+  /* padding: 0 16px; */
+}
+

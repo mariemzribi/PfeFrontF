@@ -1,20 +1,13 @@
 <div class="dashboard-container">
-  <!-- Styles intégrés -->
-
-
-  <mat-toolbar>
-    <!-- Bouton Menu avec MatMenu -->
-
-
+  <mat-toolbar style="background-color:  #c1d82f;height:10% ; color: white;">
     <span class="example-spacer"></span>
-    <!-- Champ de recherche avec menu déroulant -->
-    <mat-form-field class="project-selector">
-      <mat-label>Sélectionner un projet</mat-label>
+    <mat-form-field style=" width:20%; height:100% ; margin-top: 2%" class="project-selector">
+      <mat-label>Select a project</mat-label>
       <mat-select [(value)]="selectedProjectId" (selectionChange)="onProjectSelected()">
         <!-- Champ de recherche -->
         <div class="search-box">
           <mat-form-field appearance="outline" floatLabel="always">
-            <input matInput placeholder="Rechercher..." [(ngModel)]="searchTerm" (input)="filterProjects()">
+            <input matInput placeholder="search..." [(ngModel)]="searchTerm" (input)="filterProjects()">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
@@ -27,18 +20,27 @@
         <!-- Message vide -->
         @if (filteredProjectIds.length === 0) {
         <mat-option disabled>
-          {{ searchTerm ? 'Aucun résultat' : 'Aucun projet disponible' }}
+          {{ searchTerm ? 'No results' : 'No projects available' }}
         </mat-option>
         }
       </mat-select>
     </mat-form-field>
+    <!-- Correct -->
+    <button mat-icon-button color="success" (click)="navigateToBi()" routerLink="['/Bi']"><mat-icon>analytics</mat-icon>
+    </button>
 
-    <button mat-icon-button aria-label="Déconnexion" (click)="logout()">
+    <!-- <button  class="btn btn-success">
+</button> -->
+
+    <!-- <button mat-icon-button aria-label="Déconnexion" (click)="logout()">
       <mat-icon>exit_to_app</mat-icon>
+    </button> -->
+    <button mat-icon-button color="red" (click)="logout()" aria-label="logout">
+      <mat-icon style="color: red;">exit_to_app</mat-icon>
+      <!-- logout -->
     </button>
   </mat-toolbar>
 
-  <!-- Menu qui affiche la liste des projets -->
   <mat-menu #menu="matMenu">
     <ng-container *ngIf="projectDictionary && getProjectIds().length > 0; else noProjects">
       <button mat-menu-item *ngFor="let id of getProjectIds()" (click)="selectProject(id)">
@@ -46,7 +48,7 @@
       </button>
     </ng-container>
     <ng-template #noProjects>
-      <button mat-menu-item disabled>Aucun projet disponible</button>
+      <button mat-menu-item disabled>No projects available</button>
     </ng-template>
   </mat-menu>
 
@@ -63,213 +65,403 @@
 
 
 
-      <div *ngIf="projects.length === 0" class="alert alert-info">
-        Aucun projet trouvé.
-      </div>
-      <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="tasks" matSort>
+    <div *ngIf="projects.length === 0" class="alert alert-info">
+      No projects found.
+    </div>
 
-          <!-- ID Column -->
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-            <td mat-cell *matCellDef="let task"> {{task.id}} </td>
-          </ng-container>
-          <ng-container matColumnDef="key">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
-            <td mat-cell *matCellDef="let task">
-              <a [href]="task.self.replace('/rest/api/3/issue/../' , '/browse/ ')" target="_blank">
-                {{task.key}}
-              </a>
-            </td>
-          </ng-container>
 
-          <!-- Key Column -->
-          <!-- <ng-container matColumnDef="key">
+
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="filteredTasks" matSort (matSortChange)="sortData($event)">
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Search ID</mat-label>
+              <input matInput (keyup)="applyFilter($event, 'id')" placeholder="Search">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <!-- ID
+            <input matInput placeholder="Search" (input)="applyFilter($event, 'id')" /> -->
+          </th>
+          <td mat-cell *matCellDef="let task"> {{task.id}} </td>
+        </ng-container>
+        //
+        <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Search KEY</mat-label>
+              <input matInput (keyup)="applyFilter($event, 'key')" placeholder="Search">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <!-- ID
+            <input matInput placeholder="Search" (input)="applyFilter($event, 'id')" /> -->
+          </th>
+          <td mat-cell *matCellDef="let task">
+            <a [href]="'https://grosste02.atlassian.net/browse/' + task.key" target="_blank">
+              {{ task.key }}
+            </a>
+          </td>
+        </ng-container>
+        //
+        <!-- <ng-container matColumnDef="key">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width:150px; width: 150px;"> Key
+            <input matInput placeholder="Search" (input)="applyFilter($event, 'key')"
+              style="max-width:100px; width: 100px;" />
+          </th>
+          <td mat-cell *matCellDef="let task">
+            <a [href]="'https://grosste02.atlassian.net/browse/' + task.key" target="_blank">
+              {{ task.key }}
+            </a>
+          </td>
+        </ng-container> -->
+
+        <!-- Key Column -->
+        <!-- <ng-container matColumnDef="key">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Key </th>
           <td mat-cell *matCellDef="let task"> {{task.key}} </td>
         </ng-container> -->
 
-          <!-- Summary Column -->
+        <!-- Summary Column -->
+
+        <!-- <ng-container matColumnDef="summary">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width:150px; width: 150px;">
+            Summary
+            <input matInput placeholder="Search" (input)="applyFilter1($event, 'summary')"
+              style="max-width:100px; width: 100px;" />
+          </th>
+
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 200px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.summary }}
+            </div>
+          </td>
+        </ng-container> -->
 
 
-          <ng-container matColumnDef="summary">
-            <th mat-header-cell *matHeaderCellDef>Summary</th>
-            <td mat-cell *matCellDef="let task">{{task.fields.summary}}</td>
+        <ng-container matColumnDef="summary">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Search summary</mat-label>
+              <input matInput (keyup)="applyFilter1($event, 'summary')" placeholder="Search">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <!-- ID
+            <input matInput placeholder="Search" (input)="applyFilter($event, 'id')" /> -->
+          </th>
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 200px; overflow-x: auto; white-space: nowrap;">
+              {{task.fields.summary}}
+            </div>
+          </td>
+        </ng-container>
 
-            <!-- <th style="width: 200px" mat-header-cell *matHeaderCellDef mat-sort-header> Summary </th>
-              <td style="width: 200px" mat-cell *matCellDef="let task"> {{task.fields.summary}} </td> -->
-          </ng-container>
+        <!-- Epic Column -->
+        <ng-container matColumnDef="epic">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Filtrer par Epic</mat-label>
+              <mat-select multiple [(value)]="selectedEpics"
+                (selectionChange)="applyMultiSelectFilterEpic($event.value, 'epic')" style="font-size: 13px;">
+                <mat-option *ngFor="let epic of epicList" [value]="epic" style="min-height: 36px; font-size: 13px;">
+                  {{ epic }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
 
-          <!-- Epic Column -->
-          <ng-container matColumnDef="epic">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Epic </th>
-            <td mat-cell *matCellDef="let task"> {{task.fields.parent && task.fields.parent.key ? task.fields.parent.key
-              :
-              'N/A'}} </td>
-          </ng-container>
-
-          <!-- IssueType Column -->
-          <ng-container matColumnDef="issuetype">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Issue Type </th>
-            <td mat-cell *matCellDef="let task"> {{task.fields.issuetype.name}} </td>
-          </ng-container>
-
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-            <td mat-cell *matCellDef="let task"> {{task.fields.status.name}} </td>
-          </ng-container>
-
-          <!-- Reg Package Column -->
+          <!-- Cellule de données -->
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.parent && task.fields.parent.key ? task.fields.parent.key : 'N/A' }}
+            </div>
+          </td>
+        </ng-container>
 
 
-          <!-- Sprint Column -->
-          <ng-container matColumnDef="sprint">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Sprint </th>
-            <td mat-cell *matCellDef="let task"> {{ task.fields.customfield_10020 && task.fields.customfield_10020[0] ?
-              task.fields.customfield_10020[0].name : 'N/A' }} </td>
+        <!-- IssueType Column -->
+        <ng-container matColumnDef="issuetype">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Filtrer par type</mat-label>
+              <mat-select multiple [(value)]="selectedIssueTypes"
+                (selectionChange)="applyMultiSelectFilterType($event.value)" style="font-size: 13px;">
+                <mat-option *ngFor="let type of issueTypeList" [value]="type"
+                  style="min-height: 36px; font-size: 13px;">
+                  {{ type }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
 
-          </ng-container>
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.issuetype.name }}
+            </div>
+          </td>
+        </ng-container>
 
-          <!-- Assignee Column -->
-          <ng-container matColumnDef="assignee">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </th>
-            <td mat-cell *matCellDef="let task"> {{task.fields.assignee ? task.fields.assignee.displayName : 'N/A'}}
-            </td>
-          </ng-container>
 
-          <!-- QA Creation Column -->
-          <ng-container matColumnDef="qaCreation">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> QA Creation </th>
-            <td mat-cell *matCellDef="let task"
-              [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case creation')}"> {{
-              getTaskStatusCreation(task) | async }}</td>
-          </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Filter by status</mat-label>
+              <mat-select multiple [(value)]="selectedStatuses"
+                (selectionChange)="applyMultiSelectFilterStatus($event.value, 'status')" style="font-size: 13px;">
+                <mat-option *ngFor="let status of statusList" [value]="status"
+                  style="min-height: 36px; font-size: 13px;">
+                  {{ status }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
 
-          <!-- QA Review Column -->
-          <ng-container matColumnDef="qaReview">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> QA Review </th>
-            <td mat-cell *matCellDef="let task"
-              [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case review')} ">{{getTaskStatusReview(task) |
-              async}} </td>
-          </ng-container>
+          <!-- Cellule de données -->
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.status.name }}
+            </div>
+          </td>
+        </ng-container>
 
-          <!-- Regression Creation Column -->
-          <!-- <ng-container matColumnDef="regressionCreation">
+
+        <!-- Reg Package Column -->
+
+
+        <!-- Sprint Column -->
+        <ng-container matColumnDef="sprint">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Filter by sprint</mat-label>
+              <mat-select multiple [(value)]="selectedSprints"
+                (selectionChange)="applyMultiSelectFilterSprint($event.value)" style="font-size: 13px;">
+                <mat-option *ngFor="let sprint of sprintList" [value]="sprint"
+                  style="min-height: 36px; font-size: 13px;">
+                  {{ sprint }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
+
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.customfield_10020 && task.fields.customfield_10020[0]?.name ?
+              task.fields.customfield_10020[0].name : 'N/A' }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Assignee Column -->
+        <ng-container matColumnDef="assignee">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header">
+              <mat-label>Filter by assigned</mat-label>
+              <mat-select multiple [(value)]="selectedAssignees"
+                (selectionChange)="applyMultiSelectFilterAssignee($event.value, 'assignee')" style="font-size: 13px;">
+                <mat-option *ngFor="let assignee of assigneeList" [value]="assignee"
+                  style="min-height: 36px; font-size: 13px;">
+                  {{ assignee }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
+
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.assignee ? task.fields.assignee.displayName : 'N/A' }}
+            </div>
+          </td>
+        </ng-container>
+
+
+        <!-- <ng-container matColumnDef="reporter">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header style="padding: 8px 16px; background-color: #f8f9fa;">
+    <div style="font-weight: 600; color: #000000; margin-bottom: 8px;">Reporter</div>
+
+    <mat-form-field appearance="fill" style="width: 100%; margin-top: 4px;">
+      <mat-select multiple placeholder="Filtrer par reporter" [(value)]="selectedReporters"
+        (selectionChange)="applyMultiSelectFilterReporter($event.value, 'reporter')"
+        style="font-size: 13px; background-color: #ffffff;">
+        <mat-option *ngFor="let reporter of reporterList" [value]="reporter"
+          style="min-height: 36px; font-size: 13px;">
+          {{ reporter }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </th>
+
+  <td mat-cell *matCellDef="let task">
+    {{ task.fields.reporter?.displayName || 'N/A' }}
+  </td>
+</ng-container> -->
+
+        <ng-container matColumnDef="reporter">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-form-field appearance="outline" floatLabel="always" class="search-header" style=" margin-top: 8px;">
+              <mat-label>Filter by reporter</mat-label> <!-- ✅ libellé corrigé -->
+              <mat-select multiple [(value)]="selectedReporters"
+                (selectionChange)="applyMultiSelectFilterReporter($event.value, 'reporter')" style="font-size: 13px;">
+                <mat-option *ngFor="let reporter of reporterList" [value]="reporter"
+                  style="min-height: 36px; font-size: 13px;">
+                  {{ reporter }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </th>
+
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 150px; overflow-x: auto; white-space: nowrap;">
+              {{ task.fields.reporter?.displayName || 'N/A' }}
+            </div>
+          </td>
+        </ng-container>
+
+
+
+
+        <!-- QA Creation Column -->
+        <ng-container matColumnDef="qaCreation">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header style="font-weight: 600; font-size: 14px; color: #3c3c3c; text-align: center;">
+    QA Creation
+  </th>
+  <td mat-cell *matCellDef="let task" [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case creation')}">
+    {{ getTaskStatusCreation(task) | async }}
+  </td>
+</ng-container>
+
+
+        <!-- QA Review Column -->
+        <ng-container matColumnDef="qaReview">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> QA Review </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case review')} ">{{getTaskStatusReview(task) |
+            async}} </td>
+        </ng-container>
+
+        <!-- Regression Creation Column -->
+        <!-- <ng-container matColumnDef="regressionCreation">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Creation </th>
           <td mat-cell *matCellDef="let task"> {{task.fields.regressionCreation || 'N/A'}} </td>
         </ng-container> -->
 
-          <!-- Regression Review Column -->
-          <ng-container matColumnDef="QA Test case execution">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> QA execution</th>
-            <td mat-cell *matCellDef="let task"
-              [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case execution')}">
-              {{getTaskStatusExecution(task) | async}} </td>
-          </ng-container>
+        <!-- Regression Review Column -->
+        <ng-container matColumnDef="QA Test case execution">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> QA execution</th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'QA Test case execution')}">
+            {{getTaskStatusExecution(task) | async}} </td>
+        </ng-container>
 
 
-          <ng-container matColumnDef="Regression Test Case Creation">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Creation </th>
-            <td mat-cell *matCellDef="let task"
-              [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Creation')}">
-              {{getTaskStatusRCreation(task)| async}} </td>
-          </ng-container>
-          <ng-container matColumnDef="Regression Test Case Review">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Review </th>
-            <td mat-cell *matCellDef="let task"
-              [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Review')}">
-              {{getTaskStatusRview(task) | async}} </td>
-          </ng-container>
-          <!-- Deploy Column -->
-          <!-- <ng-container matColumnDef="deploy">
+        <ng-container matColumnDef="Regression Test Case Creation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Creation </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Creation')}">
+            {{getTaskStatusRCreation(task)| async}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Regression Test Case Review">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Review </th>
+          <td mat-cell *matCellDef="let task"
+            [ngStyle]="{'background-color': getTaskColor(task, 'Regression Test Case Review')}">
+            {{getTaskStatusRview(task) | async}} </td>
+        </ng-container>
+        <!-- Deploy Column -->
+        <!-- <ng-container matColumnDef="deploy">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Deploy </th>
           <td mat-cell *matCellDef="let task"> {{task.fields.deploy || 'N/A'}} </td>
         </ng-container> -->
 
-          <!-- Assign To Column -->
-          <!-- <ng-container matColumnDef="Assign to">
+        <!-- Assign To Column -->
+        <!-- <ng-container matColumnDef="Assign to">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Assign To </th>
           <td mat-cell *matCellDef="let task"> {{task.fields.assignTo || 'N/A'}} </td>
         </ng-container> -->
 
-          <!-- Status Test Column -->
+        <!-- Status Test Column -->
 
 
 
-          <ng-container matColumnDef="regPackage">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Reg Package </th>
-            <td mat-cell *matCellDef="let task"> {{ task.regPackageId ? task.regPackageId : 'Aucun regPackageId' }}
-            </td>
-          </ng-container>
-          <!-- Comment Column -->
-          <ng-container matColumnDef="Comment">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
-            <td mat-cell *matCellDef="let task"> {{ task.comment ? task.comment : 'Aucun commentaire' }} </td>
-          </ng-container>
+        <ng-container matColumnDef="regPackage">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Regression Package </th>
+          <!-- <td mat-cell *matCellDef="let task"> {{ task.regPackageId ? task.regPackageId : 'Aucun regPackageId' }}
+          </td> -->
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 100px; overflow-x: auto; white-space: nowrap;">
+              {{ task.regPackageId ? task.regPackageId : 'Empty' }}
+            </div>
+          </td>
 
-          <ng-container matColumnDef="time_needed_for_tc_creation">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> time_needed_for_tc_creation </th>
-            <td mat-cell *matCellDef="let task">{{ task.timeNeededForTcCreation? task.timeNeededForTcCreation: 'Aucun
-              timeNeededForTcCreation' }} </td>
-          </ng-container>
+        </ng-container>
 
-          <ng-container matColumnDef="time_needed_to_test">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> time_needed_to_test </th>
-            <td mat-cell *matCellDef="let task"> {{ task.timeNeededToTest? task.timeNeededToTest: 'Aucun
-              timeNeededToTest'
-              }} </td>
-          </ng-container>
-          <ng-container matColumnDef="bugs_raised">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> bugs_raised </th>
-            <td mat-cell *matCellDef="let task">{{ task.bugsRaised ? task.bugsRaised : 'Aucun bugsRaised' }} </td>
-          </ng-container>
+        <ng-container matColumnDef="Comment">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 10%;"> Comment </th>
+          <!-- <td mat-cell *matCellDef="let task"> {{ task.comment ? task.comment : 'Aucun commentaire' }} </td> -->
+          <td mat-cell *matCellDef="let task">
+            <div style="max-width: 100px; overflow-x: auto; white-space: nowrap;">
+              {{ task.comment ? task.comment : 'Empty' }} </div>
+          </td>
 
-          <ng-container matColumnDef="nb_tc">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> nb_tc </th>
-            <td mat-cell *matCellDef="let task"> {{ task.nbTc ? task.nbTc : 'Aucun nbTc' }} </td>
-          </ng-container>
+        </ng-container>
 
-          <ng-container matColumnDef="Nb_tc_modified">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nb_tc_modified </th>
-            <td mat-cell *matCellDef="let task"> {{ task.nbTcModified ? task.nbTcModified : 'Aucun nbTcModified' }}
-            </td>
-          </ng-container>
+        <ng-container matColumnDef="time_needed_for_tc_creation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Time Needed for TC Cre </th>
+          <td mat-cell *matCellDef="let task">{{ task.timeNeededForTcCreation? task.timeNeededForTcCreation: 'Empty' }} </td>
+        </ng-container>
 
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
-            <td mat-cell *matCellDef="let task" class="action-cell">
-              <button mat-icon-button class="action-btn add" matTooltip="Ajouter" (click)="onAjoutSup(task)"
-              *ngIf="!task.regPackageId && !task.comment && !task.timeNeededForTcCreation && !task.timeNeededToTest && !task.bugsRaise && !task.nbTc && !task.nbTcModified " >
-                <mat-icon>add_circle</mat-icon>
-              </button>
-              <button mat-icon-button class="action-btn edit" matTooltip="Modifier" (click)="openUpdateDialog(task)"
-              *ngIf="task.regPackageId || task.comment || task.timeNeededForTcCreation != null || task.timeNeededToTest != null || task.bugsRaised != null || task.nbTc != null || task.nbTcModified != null"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button class="action-btn delete" matTooltip="Supprimer" (click)="onDelete(task)"
-              *ngIf="task.regPackageId || task.comment || task.timeNeededForTcCreation != null || task.timeNeededToTest != null || task.bugsRaised != null || task.nbTc != null || task.nbTcModified != null"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </ng-container>
+        <ng-container matColumnDef="time_needed_to_test">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Time needed to test </th>
+          <td mat-cell *matCellDef="let task"> {{ task.timeNeededToTest? task.timeNeededToTest: 'Empty'
+            }} </td>
+        </ng-container>
+        <ng-container matColumnDef="bugs_raised">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Bugs Raised </th>
+          <td mat-cell *matCellDef="let task">{{ task.bugsRaised ? task.bugsRaised : 'Empty' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nb_tc">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Number of TC </th>
+          <td mat-cell *matCellDef="let task"> {{ task.nbTc ? task.nbTc : 'Empty' }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Nb_tc_modified">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Number of TC mod </th>
+          <td mat-cell *matCellDef="let task"> {{ task.nbTcModified ? task.nbTcModified : 'Empty' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let task" class="action-cell">
+            <button mat-icon-button class="action-btn add" matTooltip="Ajouter" (click)="onAjoutSup(task)"
+              *ngIf="!task.regPackageId && !task.comment && !task.timeNeededForTcCreation && !task.timeNeededToTest && !task.bugsRaise && !task.nbTc && !task.nbTcModified ">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button mat-icon-button class="action-btn edit" matTooltip="Modifier" (click)="openUpdateDialog(task)"
+              *ngIf="task.regPackageId || task.comment || task.timeNeededForTcCreation != null || task.timeNeededToTest != null || task.bugsRaised != null || task.nbTc != null || task.nbTcModified != null">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="action-btn delete" matTooltip="Supprimer" (click)="onDelete(task)"
+              *ngIf="task.regPackageId || task.comment || task.timeNeededForTcCreation != null || task.timeNeededToTest != null || task.bugsRaised != null || task.nbTc != null || task.nbTcModified != null">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
 
 
-          <!-- Row Template -->
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
+        <!-- Row Template -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
-        <!-- Paginator -->
-        <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
-        </mat-paginator>
-      </div>
+      <!-- Paginator -->
 
-      <div *ngIf="tasks.length === 0 && selectedProject" class="alert alert-info">
-        Aucune tâche trouvée pour ce projet.
-      </div>
+    </div>
+
+    <div *ngIf="tasks.length === 0 && selectedProject" class="alert alert-info">
+      No Tasks for this project </div>
   </div>
+
 </div>

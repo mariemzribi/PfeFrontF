@@ -7,8 +7,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { BiComponent} from './bi/bi.component';    
 import { AuthGuard } from './auth.guard';
 export const routes: Routes = [
+  //si pas de chemain dans le lien il se dirige vers la page de singin
   { path: '', redirectTo: '/signin', pathMatch: 'full' },
   {
+    //UserComponent agit ici comme un composant parent. 
     path: '', component: UserComponent,
     children: [
       { path: 'signin', component: LoginComponent },

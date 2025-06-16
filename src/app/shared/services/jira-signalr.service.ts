@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,37 +12,37 @@ export class JiraSignalrService {
   issuesReceived$ = new Subject<any>();
   messagesReceived$ = new Subject<string>();
   errorsReceived$ = new Subject<string>();
-connectionStatus$ = new Subject<'connected' | 'disconnected' | 'reconnecting'>();
+  connectionStatus$ = new Subject<'connected' | 'disconnected' | 'reconnecting'>();
 
-  constructor() {}
+  baseUrl: string = environment.baseUrl;
+
+  constructor() { }
 
   startConnection(email: string, token: string, projectName: string, domaine: string): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7104/jiraHub')
+      .withUrl(`${this.baseUrl}/jiraHub`)
       .withAutomaticReconnect()
       .build();
 
     // Ici tu peux déclencher une action : notification, tentative manuelle de reconnexion, etc.
+    this.hubConnection.onreconnecting(error => {
+      console.log('🔁 Tentative de reconnexion en cours...', error);
+      this.connectionStatus$.next('reconnecting');
+    });
+
     this.hubConnection.onreconnected(() => {
-  console.log('🔄 Reconnecté à SignalR, réabonnement en cours...');
-    this.connectionStatus$.next('connected');
-  this.subscribeToJira(email, token, projectName, domaine);
-});
+      console.log('🔄 Reconnecté à SignalR, réabonnement en cours...');
+      this.connectionStatus$.next('connected');
+      this.subscribeToJira(email, token, projectName, domaine);
+    });
 
-this.hubConnection.onclose(error => {
-  console.warn('🚫 Connexion SignalR fermée :', error);
-    this.connectionStatus$.next('disconnected');
+    this.hubConnection.onclose(error => {
+      console.warn('🚫 Connexion SignalR fermée :', error);
+      this.connectionStatus$.next('disconnected');
+    });
+    // toujour en ecoute 
 
-});
-
-this.hubConnection.onreconnecting(error => {
-  console.log('🔁 Tentative de reconnexion en cours...', error);
-    this.connectionStatus$.next('reconnecting');
-
-
-});
-
-//
+    //
     return this.hubConnection
       .start()
       .then(() => {
@@ -81,7 +82,7 @@ this.hubConnection.onreconnecting(error => {
       console.error('❌ La connexion SignalR n\'est pas encore établie.');
       return;
     }
-
+    //declanchement websoket
     this.hubConnection.invoke('SubscribeToJiraUpdates', email, token, projectName, domaine)
       .catch(err => {
         console.error('❌ Erreur lors de l\'abonnement:', err);

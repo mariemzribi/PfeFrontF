@@ -50,7 +50,7 @@ export class RegistrationComponent {
           if (res.succeeded) {
             this.form.reset();
             this.isSubmitted = false;
-            this.toastr.success('Nouvel utilisateur créé avec succès !', 'Inscription réussie');
+            this.toastr.success('New user successfully created!', 'Inscription réussie');
           }
         },
         error: err => {
@@ -67,23 +67,23 @@ export class RegistrationComponent {
   
       err.error.forEach((errorItem: any) => {
         if (errorItem.code === 'DuplicateEmail') {
-          this.toastr.error('Cet email est déjà utilisé.', 'Erreur');
+          this.toastr.error('This email is already in use.', 'Erreur');
           foundSpecificError = true;
        
         }
       });
       if (this.form.hasError('passwordMismatch')) {
-        this.toastr.error('Les mots de passe ne correspondent pas.', 'Erreur');
+        this.toastr.error('The passwords do not match.', 'Erreur');
         foundSpecificError = true;
       }
   
       if (!foundSpecificError) {
-        this.toastr.error('Une erreur est survenue. Veuillez réessayer.', 'Erreur');
+        this.toastr.error('An error occurred. Please try again.', 'Erreur');
         console.error('Erreurs inattendues:', err.error);
       }
   
     } else {
-      this.toastr.error('Erreur serveur. Veuillez réessayer plus tard.', 'Erreur');
+      this.toastr.error('Server error. Please try again later.', 'Erreur');
       console.error('Erreur serveur:', err);
     }
   }

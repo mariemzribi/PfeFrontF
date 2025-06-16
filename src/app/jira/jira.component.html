@@ -13,21 +13,21 @@
                 <div class="mb-3">
                   <label for="domaine" class="form-label">Domaine</label>
                   <div class="input-group">
-                    <input id="domaine" type="text" class="form-control bg-body-secondary" formControlName="domaine" placeholder="Entrez votre domaine" [ngClass]="{'is-invalid': hasDisplayableError('domaine')}" />
+                    <input id="domaine" type="text" class="form-control bg-body-secondary" formControlName="domaine" placeholder="Enter your domain name" [ngClass]="{'is-invalid': hasDisplayableError('domaine')}" />
                   </div>
                   <div *ngIf="hasDisplayableError('domaine')" class="text-danger small mt-1">
-                    <div *ngIf="form.controls['domaine'].hasError('required')">Veuillez entrer votre domaine.</div>
+                    <div *ngIf="form.controls['domaine'].hasError('required')">Please enter your domain.</div>
                   </div>
                 </div>
                 
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
                   <div class="input-group">
-                    <input id="email" type="text" class="form-control bg-body-secondary" formControlName="username" placeholder="Entrez votre email" [ngClass]="{'is-invalid': hasDisplayableError('username')}" />
+                    <input id="email" type="text" class="form-control bg-body-secondary" formControlName="username" placeholder="Enter your email" [ngClass]="{'is-invalid': hasDisplayableError('username')}" style="pointer-events: none;" />
                   </div>
                   <div *ngIf="hasDisplayableError('username')" class="text-danger small mt-1">
-                    <div *ngIf="form.controls['username'].hasError('required')">Veuillez entrer votre email.</div>
-                    <div *ngIf="form.controls['username'].hasError('email')">Veuillez entrer un email valide.</div>
+                    <div *ngIf="form.controls['username'].hasError('required')">Please enter your email.</div>
+                    <div *ngIf="form.controls['username'].hasError('email')">Please enter a valid email.</div>
                   </div>
                 </div>
 
@@ -35,17 +35,17 @@
                 <div class="mb-3">
                   <label for="token" class="form-label">Token</label>
                   <div class="input-group">
-                    <input id="token" type="password" class="form-control bg-body-secondary" formControlName="token" placeholder="Entrez votre token" [ngClass]="{'is-invalid': hasDisplayableError('token')}" />
+                    <input id="token" type="password" class="form-control bg-body-secondary" formControlName="token" placeholder="Enter your token" [ngClass]="{'is-invalid': hasDisplayableError('token')}" />
                   </div>
                   <div *ngIf="hasDisplayableError('token')" class="text-danger small mt-1">
-                    <div *ngIf="form.controls['token'].hasError('required')">Veuillez entrer votre toke.</div>
+                    <div *ngIf="form.controls['token'].hasError('required')">Please enter your token.</div>
                   </div>
                 </div>
 
                 <!-- Bouton Soumettre -->
                 <div class="mt-4">
                   <button type="submit" class="btn btn-success w-100 rounded-3" [disabled]="form.invalid">
-                    Valider
+                    Validate
                   </button>
                 </div>
               </form>

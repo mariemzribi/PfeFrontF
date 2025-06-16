@@ -26,7 +26,7 @@ export class LoginComponent {
     email: ['', Validators.required],
     password: ['', Validators.required],
   })
-
+//Cette méthode vérifie si un champ est invalide et si l’utilisateur l’a touché/modifié ou soumis le formulaire.
   hasDisplayableError(controlName: string): Boolean {
     const control = this.form.get(controlName);
     return Boolean(control?.invalid) &&
@@ -41,7 +41,8 @@ export class LoginComponent {
           localStorage.setItem('token', res.token);
           console.log('Token:', res.token); 
           if (res.token) {
-          this.router.navigateByUrl('/jira');
+            localStorage.setItem('email', this.form?.value?.email as string);
+            this.router.navigateByUrl('/jira');
           }
         },
         error: err => {

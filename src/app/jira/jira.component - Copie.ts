@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-jira',
@@ -15,6 +16,7 @@ export class JiraComponent {
   form: FormGroup;
   statusMessage: string | null = null;
   filePath: string | null = null; // Déclare la variable filePath
+  baseUrl: string = environment.baseApiUrl;
 
   constructor(
     private http: HttpClient,
@@ -42,20 +44,20 @@ export class JiraComponent {
       const token = this.form.value.token;
       const domaine = this.form.value.domaine;
       // Appel à l'API backend pour récupérer les projets Jira
-      this.http.get('https://localhost:7104/api/jira/projects', {
-        params: { email: email, apiToken: token , domaine :domaine},
+      this.http.get(`${this.baseUrl}/jira/projects`, {
+        params: { email: email, apiToken: token, domaine: domaine },
         responseType: 'json'
       })
-      .subscribe({
-        next: (response: any) => {
-          this.statusMessage = 'Fichier JSON créé avec succès.';
-          // Rediriger vers le tableau de bord avec les paramètres email et token
-          this.router.navigate(['/dashboard'], { queryParams: { email: email, token: token , domaine: domaine } });
-        },
-        error: () => {
-          this.statusMessage = 'Erreur lors de la connexion à Jira.';
-        }
-      });
+        .subscribe({
+          next: (response: any) => {
+            this.statusMessage = 'Fichier JSON créé avec succès.';
+            // Rediriger vers le tableau de bord avec les paramètres email et token
+            this.router.navigate(['/dashboard'], { queryParams: { email: email, token: token, domaine: domaine } });
+          },
+          error: () => {
+            this.statusMessage = 'Erreur lors de la connexion à Jira.';
+          }
+        });
     } else {
       this.statusMessage = 'Le formulaire est invalide.';
     }

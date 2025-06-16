@@ -162,7 +162,11 @@ selectedReporters: string[] = [];
     const email = this.tokenService.getEmail();
 const token = this.tokenService.getToken();
 const domaine = this.tokenService.getDomaine();
-//
+//Observable = le facteur qui va te livrer du courrier, mais ça peut prendre un moment.
+
+//subscribe() = c’est toi qui dis au facteur : « Hey, préviens-moi dès que j’ai du courrier ! »
+
+//next = c’est ce qui se passe quand le facteur arrive et te donne ton courrier (la donnée).
 
     if (email && token && domaine) {
       this.jiraService.getJiraProjects(email, token, domaine).subscribe({
@@ -171,11 +175,14 @@ const domaine = this.tokenService.getDomaine();
           this.createProjectDictionary(data);
 
           // ✅ Priorité : ID après reload
+          //On récupère dans le stockage local du navigateur un id de projet sauvegardé après un rechargement de page.
           const storedIdAfterReload = localStorage.getItem('selectedProjectIdAfterReload');
           if (storedIdAfterReload) {
+            //On met à jour la variable selectedProjectId avec cet id.
             this.selectedProjectId = storedIdAfterReload;
             this.selectProject(storedIdAfterReload);
             localStorage.removeItem('selectedProjectIdAfterReload');
+           // Les données restent uniquement pendant la session du navigateur.
             sessionStorage.removeItem('hasReloaded');
             return; // ⛔ Stop ici pour éviter le deuxième selectProject()
           }
@@ -190,14 +197,14 @@ const domaine = this.tokenService.getDomaine();
           }
         },
         error: (error: any) => {
-          this.errorMessage = 'Erreur lors de la récupération des projets Jira.';
+          this.errorMessage = 'Error while fetching Jira projects.';
           console.error(error);
           this.isLoading = false; // Cache le spinner en cas d'erreur
 
         },
       });
     } else {
-      this.errorMessage = 'Email ou token ou domaine manquant.';
+      this.errorMessage = 'Missing email or token or domain.';
     }
 
     this.fetchSupplements();
@@ -244,7 +251,7 @@ const domaine = this.tokenService.getDomaine();
       this.loadSupplements(this.selectedProject.id);
 
       console.log(`Projet sélectionné : ${this.selectedProject.name}`);
-
+//Les données restent même après la fermeture du navigateur.
       localStorage.setItem('selectedProjectId', this.selectedProject.id);
     }
   }
@@ -588,7 +595,7 @@ this.reporterList = Array.from(new Set(this.tasks.map(t => t.fields.reporter?.di
   }
 
   onDelete(task: any): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+    if (confirm('Are you sure you want to delete this task? ')) {
       this.supplementService.deleteSupplement(task.idSup).subscribe({
         next: (response) => {
           // La réponse ici est du texte, vous pouvez l'afficher si nécessaire

@@ -44,13 +44,14 @@ interface Subtask {
 interface Supplement {
   idSup?: number;
   usId: number;
-  regPackageId?: number;
+  regPackageId?: string; // string au lieu de number
   comment?: string;
-  timeNeededForTcCreation?: number;
-  timeNeededToTest?: number;
+  qaExecution?: string; // Ajouté si besoin
+  timeNeededForTcCreation?: Date; // Time
+  timeNeededToTest?: Date; // Time
   bugsRaised?: number;
-  nbTc?: number;
-  nbTcModified?: number;
+  nbTc?: number; // int
+  nbTcModified?: number; // int
 }
 @Component({
   selector: 'app-dashboard',
@@ -134,8 +135,8 @@ selectedReporters: string[] = [];
   // Tableau des tâches du projet sélectionné
   errorMessage: string = ''; // Message d'erreur
   displayedColumns: string[] = [
-    'id', 'key', 'summary', 'epic', 'issuetype', 'status',
-    'sprint', 'assignee','reporter', 'qaCreation', 'qaReview', 'QA Test case execution', 'Regression Test Case Creation', 'Regression Test Case Review', 'regPackage', 'Comment',
+    'key', 'summary', 'epic', 'issuetype', 'status',
+    'sprint', 'assignee','reporter', 'QA Test case execution', 'regPackage', 'Comment',
     'time_needed_for_tc_creation', 'time_needed_to_test', 'bugs_raised', 'nb_tc', 'Nb_tc_modified', 'action'
   ];
 

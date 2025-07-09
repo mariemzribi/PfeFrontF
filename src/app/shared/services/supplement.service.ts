@@ -6,13 +6,14 @@ import { environment } from '../../../environments/environment';
 export interface Supplement {
   idSup?: number;
   usId: number;
-  regPackageId?: number;
+  regPackageId?: string; // string au lieu de number
   comment?: string;
-  timeNeededForTcCreation?: number;
-  timeNeededToTest?: number;
+  qaExecution?: string; // Ajouté si besoin
+  timeNeededForTcCreation?: Date; // Time
+  timeNeededToTest?: Date; // Time
   bugsRaised?: number;
-  nbTc?: number;
-  nbTcModified?: number;
+  nbTc?: number; // int
+  nbTcModified?: number; // int
 }
 
 @Injectable({

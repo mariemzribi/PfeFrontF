@@ -1,5 +1,6 @@
 <div class="dashboard-container">
   <mat-toolbar style="background-color:  #c1d82f;height:10% ; color: white;">
+    
     <span class="example-spacer"></span>
     <mat-form-field style=" width:20%; height:100% ; margin-top: 2%" class="project-selector">
       <mat-label>Select a project</mat-label>
@@ -406,6 +407,8 @@
         </ng-container>
         <ng-container matColumnDef="bugs_raised">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Bugs Raised</th>
+         
+
           <td mat-cell *matCellDef="let task">{{ task.bugsRaised || 'N/A' }}</td>
         </ng-container>
         <ng-container matColumnDef="nb_tc">
@@ -444,5 +447,7 @@
     <div *ngIf="tasks.length === 0 && selectedProject" class="alert alert-info">
       No Tasks for this project </div>
   </div>
+  
+  
 
 </div>

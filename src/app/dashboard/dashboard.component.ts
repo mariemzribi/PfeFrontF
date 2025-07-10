@@ -30,6 +30,8 @@ import { MatSpinner } from '@angular/material/progress-spinner';
 import { JiraSignalrService } from '../../app/shared/services/jira-signalr.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenService  } from '../shared/services/token.service';
+import { MatCardModule } from '@angular/material/card';
+
 
 
 
@@ -66,9 +68,35 @@ interface Supplement {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'] // Si vous utilisez un fichier CSS
 })
+@Component({
+  standalone: true,
+  selector: 'app-dashboard',
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatSelectModule,
+    MatCardModule // ✅ ICI !
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
+})
+
+
 export class DashboardComponent implements OnInit {
-  spinnerMode: 'determinate' | 'indeterminate' | 'buffer' | 'query' = 'indeterminate';
-  //sort 
+  spinnerMode: 'determinate' | 'indeterminate' | 'buffer' | 'query' = 'indeterminate';//sort 
+  bugsRaised: number = 0;//bug raised
+  
   private _liveAnnouncer = inject(LiveAnnouncer);
 
 
@@ -321,6 +349,8 @@ const domaine = this.tokenService.getDomaine();
         this.jiraSignalrService.issuesReceived$.subscribe({
           next: (data: any) => {
             console.log('Données complètes reçues:', data);
+              // 👉 Récupérer bugsRaised depuis l'API
+             this.bugsRaised = data?.bugsRaised ?? 0;
 
             const issues = data?.issues || [];
             console.log('Issues extraites:', issues);

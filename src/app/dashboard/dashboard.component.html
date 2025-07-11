@@ -72,6 +72,7 @@
 
 
 
+    <!-- Tableau principal avec toutes les colonnes habituelles -->
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="filteredTasks" matSort (matSortChange)="sortData($event)">
 
@@ -405,11 +406,20 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Time needed to test</th>
           <td mat-cell *matCellDef="let task">{{ task.timeNeededToTest || 'N/A' }}</td>
         </ng-container>
+        <!-- Je retire la colonne Bugs Raised du tableau -->
+        <!--
         <ng-container matColumnDef="bugs_raised">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Bugs Raised</th>
          
 
           <td mat-cell *matCellDef="let task">{{ task.bugsRaised || 'N/A' }}</td>
+        </ng-container>
+        -->
+        <ng-container matColumnDef="bugs_raised">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Bugs Raised</th>
+          <td mat-cell *matCellDef="let task">
+            {{ bugsByScrum[task.fields.parent?.key] || 0 }}
+          </td>
         </ng-container>
         <ng-container matColumnDef="nb_tc">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Number of TC</th>
@@ -448,6 +458,6 @@
       No Tasks for this project </div>
   </div>
   
-  
+  <!-- Je supprime la section du total projet et la section Bugs Raised par Sprint (API backend) -->
 
 </div>

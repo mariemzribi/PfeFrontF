@@ -31,7 +31,7 @@ import { JiraSignalrService } from '../../app/shared/services/jira-signalr.servi
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenService  } from '../shared/services/token.service';
 import { MatCardModule } from '@angular/material/card';
-
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -58,19 +58,6 @@ interface Supplement {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatIconModule,
-    MatButtonModule,ReactiveFormsModule,
-    MatToolbarModule, MatMenuModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, FormsModule, MatSelectModule],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'] // Si vous utilisez un fichier CSS
-})
-@Component({
-  standalone: true,
-  selector: 'app-dashboard',
   imports: [
     CommonModule,
     MatTableModule,
@@ -86,7 +73,7 @@ interface Supplement {
     ReactiveFormsModule,
     FormsModule,
     MatSelectModule,
-    MatCardModule // ✅ ICI !
+    MatCardModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -96,6 +83,7 @@ interface Supplement {
 export class DashboardComponent implements OnInit {
   spinnerMode: 'determinate' | 'indeterminate' | 'buffer' | 'query' = 'indeterminate';//sort 
   bugsRaised: number = 0;//bug raised
+  bugsByScrum: { [scrumName: string]: number } = {};
   
   private _liveAnnouncer = inject(LiveAnnouncer);
 
@@ -175,7 +163,8 @@ selectedReporters: string[] = [];
     private supplementService: SupplementService,
     private dialog: MatDialog,
     private jiraSignalrService: JiraSignalrService,
-    private tokenService:TokenService,
+    private tokenService: TokenService,
+    private http: HttpClient // Ajout pour l'appel API
   ) {
     this.sortedData = this.filteredTasks.slice();
   }
@@ -240,6 +229,8 @@ const domaine = this.tokenService.getDomaine();
     setTimeout(() => {
       this.mergeTasksWithSupplements();
     }, 50000);
+    // Appel de la nouvelle API pour bugs par scrum
+    this.fetchBugsByScrum();
   }
 
 
@@ -416,7 +407,22 @@ this.reporterList = Array.from(new Set(this.tasks.map(t => t.fields.reporter?.di
     this.tasks.forEach(updatedTask => {
       console.log("comment de la tâche:", updatedTask.comment);
     })
+    // this.calculateBugsBySprint(); // <-- Ajout du calcul après la fusion
   }
+  // Ajouté pour le total des bugs par sprint
+  // bugsBySprint: { [sprintName: string]: number } = {};
+
+  // calculateBugsBySprint(): void {
+  //   this.bugsBySprint = {};
+  //   this.tasks.forEach(task => {
+  //     const sprintName = task.fields?.customfield_10020?.[0]?.name || 'Aucun sprint';
+  //     const bugs = Number(task.bugsRaised) || 0;
+  //     if (!this.bugsBySprint[sprintName]) {
+  //       this.bugsBySprint[sprintName] = 0;
+  //     }
+  //     this.bugsBySprint[sprintName] += bugs;
+  //   });
+  // }
   getTaskStatusCreation(task: any): Observable<string> {
     if (task.fields.subtasks && Array.isArray(task.fields.subtasks)) {
       const subtask = task.fields.subtasks.find(
@@ -920,6 +926,22 @@ applyMultiSelectFilterReporter(selectedValues: string[], field: string): void {
 
   private compare(a: number | string, b: number | string, isAsc: boolean): number {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  fetchBugsByScrum(): void {
+    const domaine = this.tokenService.getDomaine();
+    const projectName = this.selectedProject?.key || this.selectedProjectId;
+    const token = this.tokenService.getToken();
+    if (!domaine || !projectName || !token) return;
+    const url = `/api/jira/bugs-by-scrum?domaine=${domaine}&projectName=${projectName}&token=${token}`;
+    this.http.get<{ [scrum: string]: number }>(url).subscribe({
+      next: (data) => {
+        this.bugsByScrum = data;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des bugs par scrum', err);
+      }
+    });
   }
 }
 

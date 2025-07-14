@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
 import { JiraService } from '../../app/shared/services/jira.service';
 import { ActivatedRoute } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -97,6 +97,7 @@ export class DashboardComponent implements OnInit {
   allTasks: any[] = [];
   supplements: any[] = [];
   filteredTasks: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
 
 //
 statusList: string[] = [];
@@ -164,7 +165,8 @@ selectedReporters: string[] = [];
     private dialog: MatDialog,
     private jiraSignalrService: JiraSignalrService,
     private tokenService: TokenService,
-    private http: HttpClient // Ajout pour l'appel API
+    private http: HttpClient, // Ajout pour l'appel API
+    private cdr: ChangeDetectorRef // Pour forcer le rafraîchissement Angular
   ) {
     this.sortedData = this.filteredTasks.slice();
   }
@@ -356,6 +358,36 @@ const domaine = this.tokenService.getDomaine();
             this.mergeTasksWithSupplements();
             console.log('Tâches après filtrage:', this.tasks);
             this.filteredTasks = [...this.tasks];
+            // Debug : afficher les clés pour chaque tâche
+            console.log('--- Affichage des tasks pour debug ---');
+            this.filteredTasks.forEach(task => {
+              console.log('task.key:', task.key, 'parent:', task.fields?.parent?.key, 'task:', task);
+            });
+            const allParents = this.filteredTasks.map(task => task.fields?.parent?.key);
+            console.log('Tous les parents trouvés dans les tâches:', allParents);
+            console.log('Clés bugsByScrum:', Object.keys(this.bugsByScrum));
+            if (this.bugsByScrum) {
+              this.addFictiveTasksForScrums();
+            }
+            // Appel à fetchBugsByScrum déplacé ici pour garantir l'ordre
+            this.fetchBugsByScrum();
+
+            // Ajout de tâches fictives pour chaque scrum de la réponse backend non présent dans les parents
+            const existingParents = new Set(this.filteredTasks.map(task => task.fields?.parent?.key));
+            Object.keys(this.bugsByScrum).forEach(scrumKey => {
+              if (!existingParents.has(scrumKey)) {
+                this.filteredTasks.push({
+                  key: 'FICTIVE-' + scrumKey,
+                  fields: {
+                    parent: { key: scrumKey },
+                    summary: '(Aucune tâche réelle liée à ce scrum)',
+                    status: { name: '' },
+                    issuetype: { name: '' },
+                  },
+                  isFictive: true
+                });
+              }
+            });
             this.statusList = Array.from(new Set(this.tasks.map(t => t.fields.status?.name).filter(Boolean)));
              this.epicList = Array.from(new Set(this.tasks.map(t => t.fields.parent?.key).filter(Boolean)));
            this.issueTypeList = Array.from(new Set(this.tasks.map(t => t.fields.issuetype?.name).filter(Boolean)));
@@ -671,47 +703,41 @@ this.reporterList = Array.from(new Set(this.tasks.map(t => t.fields.reporter?.di
   }
   applyFilter(event: Event, column: string) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    if (filterValue) {
-      this.filteredTasks = this.tasks.filter(task => task[column]?.toString().toLowerCase().includes(filterValue));
-    } else {
-      this.filteredTasks = [...this.tasks]; // Si aucun filtre n'est appliqué, on rétablit les données d'origine
-    }
+    this.filteredTasks = this.tasks.filter(task => {
+      if (task.isFictive) return true;
+      return task[column]?.toString().toLowerCase().includes(filterValue);
+    });
+    this.updateFilteredTasksWithFictives();
   }
   applyFilter1(event: Event, field: string) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    if (filterValue) {
-      this.filteredTasks = this.tasks.filter(task =>
-        task.fields[field]?.toString().toLowerCase().includes(filterValue)
-      );
-    } else {
-      this.filteredTasks = [...this.tasks];
-    }
+    this.filteredTasks = this.tasks.filter(task => {
+      if (task.isFictive) return true;
+      return task.fields[field]?.toString().toLowerCase().includes(filterValue);
+    });
+    this.updateFilteredTasksWithFictives();
   }
   applyFilter2(event: Event, field: string) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    if (filterValue) {
-      this.filteredTasks = this.tasks.filter(task =>
-        task.fields[field]?.toString().toLowerCase().includes(filterValue)
-      );
-    } else {
-      this.filteredTasks = [...this.tasks];
-    }
+    this.filteredTasks = this.tasks.filter(task => {
+      if (task.isFictive) return true;
+      return task.fields[field]?.toString().toLowerCase().includes(filterValue);
+    });
+    this.updateFilteredTasksWithFictives();
   }
   applyFilterEpic(event: Event, field: string) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    if (filterValue) {
-      this.filteredTasks = this.tasks.filter(task => {
-        if (field === 'id') {
-          return task.id?.toString().toLowerCase().includes(filterValue);
-        } else if (field === 'epic') {
-          return task.fields.parent?.key?.toString().toLowerCase().includes(filterValue);
-        } else {
-          return task.fields[field]?.toString().toLowerCase().includes(filterValue);
-        }
-      });
-    } else {
-      this.filteredTasks = [...this.tasks];
-    }
+    this.filteredTasks = this.tasks.filter(task => {
+      if (task.isFictive) return true;
+      if (field === 'id') {
+        return task.id?.toString().toLowerCase().includes(filterValue);
+      } else if (field === 'epic') {
+        return task.fields.parent?.key?.toString().toLowerCase().includes(filterValue);
+      } else {
+        return task.fields[field]?.toString().toLowerCase().includes(filterValue);
+      }
+    });
+    this.updateFilteredTasksWithFictives();
   }
 
   applyFilterType(event: Event, field: string) {
@@ -725,7 +751,7 @@ this.reporterList = Array.from(new Set(this.tasks.map(t => t.fields.reporter?.di
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (filterValue) {
       this.filteredTasks = this.tasks.filter(task => {
-
+        if (task.isFictive) return true;
          if (field === 'status') {
       const statusName = task.fields.status?.name?.toLowerCase();
       if (filterValues.length > 0) {
@@ -774,67 +800,80 @@ this.reporterList = Array.from(new Set(this.tasks.map(t => t.fields.reporter?.di
       this.filteredTasks = [...this.tasks];
     }
   }
+  this.updateFilteredTasksWithFictives();
 }
 applyMultiSelectFilterStatus(selectedValues: string[], field: string): void {
   const filterValues = selectedValues.map(v => v.toLowerCase());
 
   this.filteredTasks = this.tasks.filter(task => {
+    if (task.isFictive) return true;
     if (field === 'status') {
       const statusName = task.fields.status?.name?.toLowerCase();
       return filterValues.length === 0 || filterValues.includes(statusName);
     }
     return true;
   });
+  this.updateFilteredTasksWithFictives();
 }
 applyMultiSelectFilterEpic(selectedValues: string[], field: string): void {
   const filterValues = selectedValues.map(v => v.toLowerCase());
 
   this.filteredTasks = this.tasks.filter(task => {
+    if (task.isFictive) return true;
     if (field === 'epic') {
       const epicKey = task.fields.parent?.key?.toLowerCase();
       return filterValues.length === 0 || filterValues.includes(epicKey);
     }
     return true;
   });
+  this.updateFilteredTasksWithFictives();
 }
  applyMultiSelectFilterType(selectedValues: string[]): void {
     const filterValues = selectedValues.map(v => v.toLowerCase());
     this.filteredTasks = this.tasks.filter(task => {
+      if (task.isFictive) return true;
       const name = task.fields.issuetype?.name?.toLowerCase();
       return filterValues.length === 0 || filterValues.includes(name);
     });
+    this.updateFilteredTasksWithFictives();
   }
 
 applyMultiSelectFilterSprint(selectedValues: string[]): void {
   const filterValues = selectedValues.map(v => v.toLowerCase());
 
   this.filteredTasks = this.tasks.filter(task => {
+    if (task.isFictive) return true;
     const sprintName = task.fields.customfield_10020?.[0]?.name?.toLowerCase();
     return filterValues.length === 0 || filterValues.includes(sprintName);
   });
+  this.updateFilteredTasksWithFictives();
 }
 
 applyMultiSelectFilterAssignee(selectedValues: string[], field: string): void {
   const filterValues = selectedValues.map(v => v.toLowerCase());
 
   this.filteredTasks = this.tasks.filter(task => {
+    if (task.isFictive) return true;
     if (field === 'assignee') {
       const assigneeName = task.fields.assignee?.displayName?.toLowerCase();
       return filterValues.length === 0 || filterValues.includes(assigneeName);
     }
     return true;
   });
+  this.updateFilteredTasksWithFictives();
 }
 applyMultiSelectFilterReporter(selectedValues: string[], field: string): void {
   const filterValues = selectedValues.map(v => v.toLowerCase());
 
   this.filteredTasks = this.tasks.filter(task => {
+    if (task.isFictive) return true;
     if (field === 'reporter') {
       const reporterName = task.fields.reporter?.displayName?.toLowerCase();
       return filterValues.length === 0 || filterValues.includes(reporterName);
     }
     return true;
   });
+  this.updateFilteredTasksWithFictives();
 }
 
 
@@ -931,17 +970,87 @@ applyMultiSelectFilterReporter(selectedValues: string[], field: string): void {
   fetchBugsByScrum(): void {
     const domaine = this.tokenService.getDomaine();
     const projectName = this.selectedProject?.key || this.selectedProjectId;
-    const token = this.tokenService.getToken();
-    if (!domaine || !projectName || !token) return;
-    const url = `/api/jira/bugs-by-scrum?domaine=${domaine}&projectName=${projectName}&token=${token}`;
+    const email = this.tokenService.getEmail();
+    const apiToken = this.tokenService.getToken();
+    if (!domaine || !projectName || !email || !apiToken) return;
+    const url = `/api/jira/bugs-by-scrum?domaine=${domaine}&projectName=${projectName}&email=${email}&apiToken=${apiToken}`;
     this.http.get<{ [scrum: string]: number }>(url).subscribe({
       next: (data) => {
         this.bugsByScrum = data;
+        if (this.filteredTasks && this.filteredTasks.length > 0) {
+          this.updateFilteredTasksWithFictives();
+        }
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des bugs par scrum', err);
       }
     });
+  }
+
+  private addFictiveTasksForScrums() {
+    if (!this.bugsByScrum) return;
+    const existingParents = new Set(this.filteredTasks.map(task => task.fields?.parent?.key));
+    Object.keys(this.bugsByScrum).forEach(scrumKey => {
+      if (!existingParents.has(scrumKey)) {
+        this.filteredTasks.push({
+          id: 'FICTIVE-' + scrumKey, // Ajout d'un id unique
+          key: 'FICTIVE-' + scrumKey,
+          fields: {
+            parent: { key: scrumKey },
+            summary: '(Aucune tâche réelle liée à ce scrum)',
+            status: { name: '' },
+            issuetype: { name: '' },
+          },
+          nbTc: null,
+          comment: '',
+          regPackageId: '',
+          timeNeededForTcCreation: null,
+          timeNeededToTest: null,
+          bugsRaised: null,
+          nbTcModified: null,
+          isFictive: true
+        });
+      }
+    });
+    // Log pour debug
+    console.log('Tâches fictives ajoutées:', this.filteredTasks.filter(t => t.isFictive));
+    console.log('Clés bugsByScrum:', Object.keys(this.bugsByScrum));
+    this.filteredTasks.filter(t => t.isFictive).forEach(t => {
+      const key = t.fields.parent.key;
+      console.log('Fictive:', key, '=>', this.bugsByScrum[key]);
+    });
+    this.cdr.detectChanges();
+  }
+
+  // Nouvelle méthode centrale pour ajouter les tâches fictives et mettre à jour la dataSource
+  private updateFilteredTasksWithFictives() {
+    // Ajoute les tâches fictives pour chaque scrum de la réponse backend non présent dans les parents
+    if (!this.bugsByScrum) return;
+    const existingParents = new Set(this.filteredTasks.map(task => task.fields?.parent?.key));
+    Object.keys(this.bugsByScrum).forEach(scrumKey => {
+      if (!existingParents.has(scrumKey)) {
+        this.filteredTasks.push({
+          id: 'FICTIVE-' + scrumKey,
+          key: 'FICTIVE-' + scrumKey,
+          fields: {
+            parent: { key: scrumKey },
+            summary: '(Aucune tâche réelle liée à ce scrum)',
+            status: { name: '' },
+            issuetype: { name: '' },
+          },
+          nbTc: null,
+          comment: '',
+          regPackageId: '',
+          timeNeededForTcCreation: null,
+          timeNeededToTest: null,
+          bugsRaised: null,
+          nbTcModified: null,
+          isFictive: true
+        });
+      }
+    });
+    this.dataSource.data = this.filteredTasks;
+    this.cdr.detectChanges();
   }
 }
 

@@ -881,6 +881,9 @@ applyMultiSelectFilterReporter(selectedValues: string[], field: string): void {
     console.log('Clic sur le bouton Bi');
     this.router.navigate(['/Bi']);
   }
+  navigateToVisualisation() {
+    this.router.navigate(['/dashboard-visualisation']);
+  }
   // ngAfterViewInit(): void {
 
   //       this.filteredTasks.sort = this.sort;

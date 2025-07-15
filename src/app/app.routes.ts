@@ -21,5 +21,8 @@ export const routes: Routes = [
   
   { path: 'jira', component: JiraComponent ,canActivate: [AuthGuard]},
   { path: 'dashboard', component: DashboardComponent ,canActivate: [AuthGuard] },
+  { path: 'dashboard-visualisation',
+  loadComponent: () => import('./dashboard/dashboard-visualisation.component').then(m => m.DashboardVisualisationComponent)
+},
   {path: 'Bi', component : BiComponent ,canActivate: [AuthGuard]}
 ];

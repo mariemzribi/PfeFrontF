@@ -1,0 +1,77 @@
+<div class="visualisation-container">
+  <h2>Indicateurs Clés</h2>
+  <div *ngIf="isLoading" class="loading">Chargement...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="indicators" class="cards">
+    <!-- Total Bugs -->
+    <mat-card class="indicator-card">
+      <div class="card-content">
+        <mat-icon class="indicator-icon purple">bug_report</mat-icon>
+        <div>
+          <div class="indicator-value">{{ indicators.totalBugs }}</div>
+          <div class="indicator-label">Total Bugs</div>
+          <div class="indicator-trend up">
+            +10% <mat-icon>arrow_upward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <!-- Average Test Time -->
+    <mat-card class="indicator-card">
+      <div class="card-content">
+        <mat-icon class="indicator-icon yellow">timer</mat-icon>
+        <div>
+          <div class="indicator-value">{{ indicators.averageTestTimeHours | number:'1.1-2' }}h</div>
+          <div class="indicator-label">Temps moyen de test</div>
+          <div class="indicator-trend down">
+            -5% <mat-icon>arrow_downward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <!-- Stories In Progress -->
+    <mat-card class="indicator-card">
+      <div class="card-content">
+        <mat-icon class="indicator-icon red">auto_stories</mat-icon>
+        <div>
+          <div class="indicator-value">{{ indicators.storiesInProgress }}</div>
+          <div class="indicator-label">Stories en cours</div>
+          <div class="indicator-trend up">
+            +3% <mat-icon>arrow_upward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <!-- Critical Bugs -->
+    <mat-card class="indicator-card">
+      <div class="card-content">
+        <mat-icon class="indicator-icon purple">priority_high</mat-icon>
+        <div>
+          <div class="indicator-value">{{ indicators.criticalBugs }}</div>
+          <div class="indicator-label">Bugs critiques</div>
+          <div class="indicator-trend down">
+            -2% <mat-icon>arrow_downward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
+          </div>
+          <!-- Mini-cards pour les priorités de bugs -->
+          <div class="priority-cards" *ngIf="indicators?.bugsByPriority">
+            <mat-card class="priority-mini-card" *ngFor="let key of (indicators.bugsByPriority | keyvalue)">
+              <mat-icon class="priority-mini-icon" [ngClass]="{
+                'low': key.key === 'Low',
+                'medium': key.key === 'Medium',
+                'high': key.key === 'High',
+                'blocker': key.key === 'Blocker'
+              }">
+                {{ key.key === 'Low' ? 'arrow_downward' :
+                   key.key === 'Medium' ? 'trending_flat' :
+                   key.key === 'High' ? 'warning' :
+                   key.key === 'Blocker' ? 'block' : 'bug_report' }}
+              </mat-icon>
+              <div class="priority-title" [ngClass]="key.key.toLowerCase()">{{ key.key }}</div>
+              <div class="priority-value">{{ key.value }}</div>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div> 

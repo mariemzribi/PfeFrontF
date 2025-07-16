@@ -10,9 +10,6 @@
         <div>
           <div class="indicator-value">{{ indicators.totalBugs }}</div>
           <div class="indicator-label">Total Bugs</div>
-          <div class="indicator-trend up">
-            +10% <mat-icon>arrow_upward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
-          </div>
         </div>
       </div>
     </mat-card>
@@ -23,9 +20,6 @@
         <div>
           <div class="indicator-value">{{ indicators.averageTestTimeHours | number:'1.1-2' }}h</div>
           <div class="indicator-label">Temps moyen de test</div>
-          <div class="indicator-trend down">
-            -5% <mat-icon>arrow_downward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
-          </div>
         </div>
       </div>
     </mat-card>
@@ -36,9 +30,6 @@
         <div>
           <div class="indicator-value">{{ indicators.storiesInProgress }}</div>
           <div class="indicator-label">Stories en cours</div>
-          <div class="indicator-trend up">
-            +3% <mat-icon>arrow_upward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
-          </div>
         </div>
       </div>
     </mat-card>
@@ -49,9 +40,7 @@
         <div>
           <div class="indicator-value">{{ indicators.criticalBugs }}</div>
           <div class="indicator-label">Bugs critiques</div>
-          <div class="indicator-trend down">
-            -2% <mat-icon>arrow_downward</mat-icon> <span class="trend-label">depuis le mois dernier</span>
-          </div>
+          <!-- Suppression de la tendance -->
           <!-- Mini-cards pour les priorités de bugs -->
           <div class="priority-cards" *ngIf="indicators?.bugsByPriority">
             <mat-card class="priority-mini-card" *ngFor="let key of (indicators.bugsByPriority | keyvalue)">

@@ -32,7 +32,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TokenService  } from '../shared/services/token.service';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient } from '@angular/common/http';
-
+import { DashboardDataService } from '../shared/services/dashboard-data.service';
 
 
 interface Subtask {
@@ -166,7 +166,8 @@ selectedReporters: string[] = [];
     private jiraSignalrService: JiraSignalrService,
     private tokenService: TokenService,
     private http: HttpClient, // Ajout pour l'appel API
-    private cdr: ChangeDetectorRef // Pour forcer le rafraîchissement Angular
+    private cdr: ChangeDetectorRef, // Pour forcer le rafraîchissement Angular,
+    private dashboardDataService: DashboardDataService
   ) {
     this.sortedData = this.filteredTasks.slice();
   }
@@ -176,51 +177,34 @@ selectedReporters: string[] = [];
   ngOnInit(): void {
     this.isLoading = true;
     this.filteredTasks = [...this.tasks];
-    // const email = this.route.snapshot.queryParamMap.get('email');
-    // const token = this.route.snapshot.queryParamMap.get('token');
-    // const domaine = this.route.snapshot.queryParamMap.get('domaine');
     const email = this.tokenService.getEmail();
-const token = this.tokenService.getToken();
-const domaine = this.tokenService.getDomaine();
-//Observable = le facteur qui va te livrer du courrier, mais ça peut prendre un moment.
-
-//subscribe() = c’est toi qui dis au facteur : « Hey, préviens-moi dès que j’ai du courrier ! »
-
-//next = c’est ce qui se passe quand le facteur arrive et te donne ton courrier (la donnée).
-
+    const token = this.tokenService.getToken();
+    const domaine = this.tokenService.getDomaine();
     if (email && token && domaine) {
       this.jiraService.getJiraProjects(email, token, domaine).subscribe({
         next: (data: any) => {
           this.projects = data;
           this.createProjectDictionary(data);
-
           // ✅ Priorité : ID après reload
-          //On récupère dans le stockage local du navigateur un id de projet sauvegardé après un rechargement de page.
           const storedIdAfterReload = localStorage.getItem('selectedProjectIdAfterReload');
           if (storedIdAfterReload) {
-            //On met à jour la variable selectedProjectId avec cet id.
             this.selectedProjectId = storedIdAfterReload;
             this.selectProject(storedIdAfterReload);
             localStorage.removeItem('selectedProjectIdAfterReload');
-           // Les données restent uniquement pendant la session du navigateur.
             sessionStorage.removeItem('hasReloaded');
-            return; // ⛔ Stop ici pour éviter le deuxième selectProject()
+            return;
           }
-
-          // Sinon, on utilise l’ID normal
           const storedId = localStorage.getItem('selectedProjectId');
           if (storedId) {
             this.selectedProjectId = storedId;
             this.selectProject(storedId);
             this.isLoading = false;
-
           }
         },
         error: (error: any) => {
           this.errorMessage = 'Error while fetching Jira projects.';
           console.error(error);
-          this.isLoading = false; // Cache le spinner en cas d'erreur
-
+          this.isLoading = false;
         },
       });
     } else {
@@ -231,8 +215,19 @@ const domaine = this.tokenService.getDomaine();
     setTimeout(() => {
       this.mergeTasksWithSupplements();
     }, 50000);
-    // Appel de la nouvelle API pour bugs par scrum
     this.fetchBugsByScrum();
+    // Après avoir récupéré les indicateurs et les stats, on met à jour le service partagé
+    this.dashboardDataService.indicators = {
+      totalBugs: this.bugsRaised,
+      averageTestTimeHours: 0, // Remplace par la vraie valeur si tu l'as
+      storiesInProgress: 0, // Remplace par la vraie valeur si tu l'as
+      criticalBugs: 0, // Remplace par la vraie valeur si tu l'as
+      bugsByPriority: {} // Remplace par la vraie valeur si tu l'as
+    };
+    this.dashboardDataService.bugsByUser = [...(this.bugsByScrum ? Object.entries(this.bugsByScrum).map(([User, BugCount]) => ({ User, BugCount })) : [])];
+    this.dashboardDataService.bugsOverTime = []; // Remplace par la vraie valeur si tu l'as
+    this.dashboardDataService.bugsByPriority = []; // Remplace par la vraie valeur si tu l'as
+    this.dashboardDataService.testTimeByFeature = []; // Remplace par la vraie valeur si tu l'as
   }
 
 
@@ -243,8 +238,6 @@ const domaine = this.tokenService.getDomaine();
     this.supplementService.getSupplements().subscribe({
       next: (data) => {
         this.supplements = data;
-        console.log("supplements", this.supplements)
-
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des supplements', err);

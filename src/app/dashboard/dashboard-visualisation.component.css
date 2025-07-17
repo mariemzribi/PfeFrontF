@@ -1,5 +1,8 @@
 .visualisation-container {
   padding: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .visualisation-container h2 {
   font-size: 1.1rem;
@@ -120,4 +123,92 @@
 .indicator-card:nth-child(4) .indicator-value,
 .indicator-card:nth-child(4) .indicator-icon {
   color: #2563eb;
+} 
+
+.mini-chart-container {
+  width: 80px;
+  height: 80px;
+  margin: 8px auto 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mini-chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+} 
+
+.charts-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: transparent;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  padding-bottom: 24px;
+}
+
+.visualisation-container {
+  padding-bottom: 180px; /* Pour éviter que le contenu ne soit caché derrière les charts sticky */
+}
+
+.chart-card {
+  background: linear-gradient(135deg, #ede9fe 60%, #c7d2fe 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.5rem;
+  width: 170px;
+  min-width: 140px;
+  max-width: 200px;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+}
+.chart-card:nth-child(2) {
+  background: linear-gradient(135deg, #fef9c3 60%, #fde68a 100%);
+}
+.chart-card:nth-child(3) {
+  background: linear-gradient(135deg, #fee2e2 60%, #fecaca 100%);
+}
+.chart-card:nth-child(4) {
+  background: linear-gradient(135deg, #e0f2fe 60%, #bae6fd 100%);
+}
+
+.chart-card h3 {
+  font-size: 0.7rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  color: #222;
+}
+
+.chart-card canvas {
+  width: 120px !important;
+  height: 120px !important;
+  margin: 0 auto;
+} 
+
+.indicator-card, .chart-card {
+  width: 170px;
+  min-width: 140px;
+  max-width: 200px;
+  height: 140px;
+  box-sizing: border-box;
+} 
+
+.key-indicators-title {
+  text-align: center;
+  margin: 0 auto 18px auto;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #222;
 } 

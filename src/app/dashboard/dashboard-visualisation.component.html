@@ -1,5 +1,5 @@
 <div class="visualisation-container">
-  <h2>Indicateurs Clés</h2>
+  <h2 class="key-indicators-title">Key Indicators</h2>
   <div *ngIf="isLoading" class="loading">Chargement...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
   <div *ngIf="indicators" class="cards">
@@ -62,5 +62,45 @@
         </div>
       </div>
     </mat-card>
+  </div>
+</div>
+
+<!-- Charts Section tout en bas -->
+<div class="charts-container">
+  <div class="chart-card">
+    <h3>Bugs by User</h3>
+    <canvas baseChart
+      [data]="bugsByUserData"
+      [type]="'doughnut'"
+      [options]="miniPieOptions"
+      [legend]="true">
+    </canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Bugs Over Time</h3>
+    <canvas baseChart
+      [data]="bugsOverTimeData"
+      [type]="'doughnut'"
+      [options]="miniPieOptions"
+      [legend]="true">
+    </canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Bugs by Priority</h3>
+    <canvas baseChart
+      [data]="bugsByPriorityData"
+      [type]="'doughnut'"
+      [options]="miniPieOptions"
+      [legend]="true">
+    </canvas>
+  </div>
+  <div class="chart-card">
+    <h3>Test Time by Feature</h3>
+    <canvas baseChart
+      [data]="testTimeByFeatureData"
+      [type]="'doughnut'"
+      [options]="miniPieOptions"
+      [legend]="true">
+    </canvas>
   </div>
 </div> 
